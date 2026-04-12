@@ -1785,15 +1785,12 @@ function App() {
 
           <form onSubmit={handleReservationSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-8 rounded-3xl shadow-xl border border-slate-100">
             
-            {/* Výber izby */}
-            <div className="space-y-2 md:col-span-2">
+            {/* Room Selection */}
+            <div>
               <Label>{t.reservation.room_label || "Vyberte izbu"}</Label>
-              <Select 
-                onValueChange={(value) => setReservationData({ ...reservationData, room_id: value })}
-                value={reservationData.room_id}
-              >
-                <SelectTrigger className="w-full py-6">
-                  <SelectValue placeholder="-- Vyberte si izbu --" />
+              <Select value={reservationData.room_id} onValueChange={(v) => setReservationData({...reservationData, room_id: v})}>
+                <SelectTrigger className="border-[#065F46]/20 focus:border-[#3B82F6] h-11" data-testid="reservation-room-select">
+                  <SelectValue placeholder=" Vyberte si izbu " />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="1">Izba č. 1 (Dvojlôžková)</SelectItem>
