@@ -938,40 +938,53 @@ function App() {
   const [adminLogin, setAdminLogin] = useState({ email: "", password: "" });
   const [adminDialogOpen, setAdminDialogOpen] = useState(false);
 
-  // --- 2. POMOCNÉ PREMENNÉ ---
+// --- 2. POMOCNÉ PREMENNÉ ---
   const dateLocale = language === "SK" ? sk : language === "DE" ? de : enUS;
   const t = translations[language];
 
-  // --- 3. FUNKCIE NA NAČÍTANIE DÁT ---
+  // --- 3. FUNKCIE NA NAČÍTANIE DÁT (Zabalené v useCallback) ---
   const fetchReviews = useCallback(async () => {
     try {
       const res = await axios.get(`${API}/reviews`);
       setReviews(Array.isArray(res.data) ? res.data : []);
-    } catch (e) { console.error("Chyba recenzií"); }
-  }, []);
+    } catch (e) { 
+      console.error("Chyba recenzií"); 
+    }
+  }, [API]);
 
   const fetchBookedDates = useCallback(async () => {
     try {
       const res = await axios.get(`${API}/reservations/occupied`);
+      // Očakávame pole stringov ["2024-04-12", "2024-04-13", ...]
       setBookedDates(Array.isArray(res.data) ? res.data : []);
-    } catch (e) { console.error("Chyba dátumov"); }
-  }, []);
+    } catch (e) { 
+      console.error("Chyba načítania obsadených termínov"); 
+    }
+  }, [API]);
 
+  // Funkcia, ktorá zakáže dátumy v kalendári
   const isDateDisabled = (date) => {
     if (!date) return false;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    
+    // 1. Zakáže minulosť
     if (date < today) return true;
+    
+    // 2. Zakáže dni, ktoré prišli z databázy
     const dateString = format(date, "yyyy-MM-dd");
     return bookedDates.includes(dateString);
   };
-
+  
   // --- 4. EFEKTY ---
+  
+  // Načítanie dát pri prvom zobrazení stránky
   useEffect(() => {
     fetchReviews();
     fetchBookedDates();
   }, [fetchReviews, fetchBookedDates]);
 
+  // Ostatné tvoje efekty (Slider, Scroll, Observer...)
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % (heroImages?.length || 1));
@@ -995,6 +1008,7 @@ function App() {
             .forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
+  
 
   // --- 5. ODOSIELACIE FUNKCIE ---
   const handleSubmit = async (e) => {

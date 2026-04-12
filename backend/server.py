@@ -62,7 +62,6 @@ async def send_reservation_email(res_data: dict):
     except Exception as e:
         logger.error(f"❌ CHYBA EMAILU REZERVÁCIE: {e}")
 
-# NOVÁ FUNKCIA PRE EMAIL Z KONTAKTNÉHO FORMULÁRA
 async def send_contact_email(contact_data: dict):
     try:
         html_msg = f"""
@@ -99,10 +98,10 @@ class ReservationCreate(BaseModel):
     note: Optional[str] = None
 
 class ReviewCreate(BaseModel):
-    author: str  # zmenené z 'name'
+    author: str
     rating: int
-    text: str    # zmenené z 'comment'
-    language: Optional[str] = "SK" # pridané políčko
+    text: str
+    language: Optional[str] = "SK"
 
 class ContactCreate(BaseModel):
     name: str
@@ -141,9 +140,9 @@ async def create_review(input: ReviewCreate):
     try:
         doc = {
             "id": str(uuid.uuid4()),
-            "author_name": input.author,  # Mapujeme author na author_name pre React
+            "author_name": input.author,
             "rating": input.rating,
-            "text": input.text,           # Mapujeme text na text
+            "text": input.text,
             "language": input.language,
             "created_at": datetime.now(timezone.utc).isoformat(),
             "approved": True 
@@ -157,33 +156,43 @@ async def create_review(input: ReviewCreate):
 @api_router.get("/reviews")
 async def get_reviews():
     try:
-        # Zoradené od najnovších
         reviews = await db.reviews.find({"approved": True}).sort("created_at", -1).to_list(length=100)
         for r in reviews: 
             r["_id"] = str(r["_id"])
-            # Poistka pre staré záznamy
             if "author_name" not in r: r["author_name"] = r.get("name", "Hosť")
         return reviews
     except Exception as e: 
         logger.error(f"Chyba pri get_reviews: {e}")
         return []
 
-# TENTO ENDPOINT TI CHÝBAL (Oprava chyby 404 v kalendári)
+# --- TU JE OPRAVENÁ LOGIKA OBSADENOSTI ---
 @api_router.get("/reservations/occupied")
 async def get_occupied_dates():
     try:
         cursor = db.reservations.find({})
         reservations = await cursor.to_list(length=1000)
-        occupied = []
+        occupied_dates = []
+        
         for res in reservations:
-            if "check_in" in res: occupied.append(res["check_in"])
-            if "check_out" in res: occupied.append(res["check_out"])
-        return occupied
+            try:
+                # Prevedieme stringy "YYYY-MM-DD" na dátumy
+                start = datetime.strptime(res["check_in"], "%Y-%m-%d")
+                end = datetime.strptime(res["check_out"], "%Y-%m-%d")
+                
+                # Vygenerujeme VŠETKY dni medzi príchodom a odchodom
+                current = start
+                while current <= end:
+                    occupied_dates.append(current.strftime("%Y-%m-%d"))
+                    current += timedelta(days=1)
+            except:
+                continue
+                
+        # List(Set()) odstráni duplicity, ak sa rezervácie prekrývajú
+        return list(set(occupied_dates))
     except Exception as e:
         logger.error(f"Chyba dátumov: {e}")
         return []
 
-# OPRAVENÝ KONTAKTNÝ ENDPOINT S EMAILOM
 @api_router.post("/contact")
 async def create_contact(input: ContactCreate):
     try:
@@ -196,16 +205,13 @@ async def create_contact(input: ContactCreate):
             "created_at": datetime.now(timezone.utc).isoformat()
         }
         await db.contacts.insert_one(doc)
-        # TOTO ODOŠLE EMAIL TEBE:
         asyncio.create_task(send_contact_email(doc))
         return {"status": "success", "message": "Správa odoslaná"}
     except Exception as e:
         logger.error(f"❌ CHYBA KONTAKTU: {e}")
         raise HTTPException(status_code=500, detail="Chyba pri ukladaní správy.")
 
-# --- ADMIN ENDPOINTY (Rezervácie aj Kontakty) ---
-
-# 1. KONTAKTY (Správy z formulára)
+# --- ADMIN ENDPOINTY ---
 @api_router.get("/admin/contacts")
 async def get_admin_contacts():
     contacts = await db.contacts.find().sort("created_at", -1).to_list(length=100)
@@ -223,7 +229,6 @@ async def delete_contact(id: str):
     except:
         raise HTTPException(status_code=500, detail="Chyba pri mazaní kontaktu")
 
-# 2. REZERVÁCIE
 @api_router.get("/admin/reservations")
 async def get_admin_reservations():
     res = await db.reservations.find().sort("created_at", -1).to_list(length=100)
@@ -236,7 +241,6 @@ async def get_admin_reservations():
 async def delete_reservation(id: str):
     from bson import ObjectId
     try:
-        # Toto vymaže tú Invalid Date rezerváciu podľa jej ID
         await db.reservations.delete_one({"_id": ObjectId(id)})
         return {"status": "success"}
     except:
@@ -255,4 +259,4 @@ async def startup_db_test():
         
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=10000)        
+    uvicorn.run(app, host="0.0.0.0", port=10000)
