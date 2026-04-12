@@ -925,8 +925,13 @@ function App() {
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", message: "" });
   const [sending, setSending] = useState(false);
   const [reservationData, setReservationData] = useState({
-    room_id: "", guest_name: "", guest_email: "", guest_phone: "",
-    check_in: null, check_out: null, guests: "2", note: ""
+    room_id: "",
+    guest_name: "", 
+    guest_email: "", 
+    guest_phone: "",
+    check_in: null, 
+    check_out: null, 
+    guests: "2", note: ""
   });
   const [reservationSending, setReservationSending] = useState(false);
   const [reviewData, setReviewData] = useState({ author_name: "", rating: 5, text: "" });
@@ -1900,6 +1905,19 @@ function App() {
                 className="py-6"
               />
             </div>
+
+         {/* SEM VLOŽ TENTO NOVÝ BLOK PRE TELEFÓN: */}
+           <div className="space-y-2">
+           <Label>{t.contact.phone || "Telefónne číslo"}</Label>
+           <Input 
+            type="tel" 
+            placeholder="+421 9xx xxx xxx"
+            required
+            value={reservationData.guest_phone}
+            onChange={(e) => setReservationData({ ...reservationData, guest_phone: e.target.value })}
+            className="py-6"
+          />
+       </div>
 
             {/* Tlačidlo Odoslať */}
             <div className="md:col-span-2 mt-4">
