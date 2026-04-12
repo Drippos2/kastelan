@@ -1,0 +1,57 @@
+{
+  "theme": "Light",
+  "archetype": "5 (Jewel & Luxury with highly saturated, vibrant tones)",
+  "instructions_to_main_agent": [
+    "REPLACE existing CSS color variables in index.css with the hyper-vibrant Jewel Tones provided below. The user specifically demanded 'jaw-dropping, vibrant, dynamic colors' because the original olive/brown/terracotta palette was too dull.",
+    "UPDATE the font from 'Cormorant Garamond' to 'Playfair Display' for all headings to evoke high-end luxury. Add the Google Font import: @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap');",
+    "HERO SECTION: Use max overlay opacity bg-black/40 (do not make it too dark). Ensure the 'Penzión Kastelán' text has a jaw-dropping vibrant gradient (e.g., bg-gradient-to-r from-[#FFB703] via-[#FF9F1C] to-[#E63946]). Add a glowing drop-shadow.",
+    "BUTTONS: Replace standard buttons with vibrant gradient CTAs (bg-gradient-to-r from-[#FFB703] to-[#E63946]) and apply the pulse animation. They must POP.",
+    "DARK SECTIONS: For 'Activities' and 'Reviews', use the deeply saturated '--color-dark-bg' (#081C15) instead of the dull brown-green. Use bright gold (#FFB703) for icons/accents on dark backgrounds.",
+    "BORDERS & SHADOWS: Use high-saturation tinted shadows instead of gray shadows (e.g., shadow-[0_20px_50px_rgba(6,95,70,0.15)]).",
+    "Replace ALL placeholder or stock images in App.js with the provided highly saturated image URLs. Do NOT use placeholder text for images.",
+    "Ensure 'data-testid' attributes are retained and added to any new interactive elements."
+  ],
+  "colors": {
+    "--color-primary": "#E63946",
+    "--color-primary-hover": "#D62828",
+    "--color-secondary": "#065F46",
+    "--color-background": "#FFFFFF",
+    "--color-surface": "#FAFAFA",
+    "--color-text-main": "#022C22",
+    "--color-text-muted": "#334155",
+    "--color-accent-yellow": "#FFB703",
+    "--color-dark-bg": "#081C15",
+    "tailwind_config_colors": {
+      "primary": "#E63946",
+      "secondary": "#065F46",
+      "accent": "#FFB703",
+      "background": "#FFFFFF",
+      "dark_section": "#081C15"
+    }
+  },
+  "fonts": {
+    "headings": "Playfair Display",
+    "body": "Outfit",
+    "typesetting_rules": "Tight tracking (tracking-tight) on H1 and H2. Leading-none for large text."
+  },
+  "spacing_and_layout": {
+    "philosophy": "Generous spacing. Increase paddings to p-12 or p-16 for sections.",
+    "bento_grid": "Use Mode A (Tetris Grid) for 'About' and 'Exterior' image galleries. Asymmetrical, overlapping images with heavy shadows."
+  },
+  "components": {
+    "header": "Crystal Glassmorphism: bg-white/80, backdrop-blur-2xl, backdrop-saturate-150, border-b border-[#065F46]/10.",
+    "cards": "Flat background with 1px border-[#065F46]/10, and a soft tinted hover shadow.",
+    "service_icons": "Vibrant emerald or gold gradient backgrounds with contrasting icons."
+  },
+  "image_urls": {
+    "hero_bg": "https://images.unsplash.com/photo-1727307764378-6f963d418297?crop=entropy&cs=srgb&fm=jpg",
+    "about_main": "https://images.unsplash.com/photo-1609302211365-0449087a8d3d?crop=entropy&cs=srgb&fm=jpg",
+    "room_gallery_1": "https://images.pexels.com/photos/34559240/pexels-photo-34559240.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "room_gallery_2": "https://images.pexels.com/photos/97083/pexels-photo-97083.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "bathroom_luxury": "https://images.unsplash.com/photo-1724595169494-9e5f0fb45a88?crop=entropy&cs=srgb&fm=jpg",
+    "kitchen_main": "https://images.pexels.com/photos/36782814/pexels-photo-36782814.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "kitchen_secondary": "https://images.pexels.com/photos/4916557/pexels-photo-4916557.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "pool_evening": "https://images.unsplash.com/photo-1645171599467-cf0b71b5b388?crop=entropy&cs=srgb&fm=jpg",
+    "castle_day": "https://images.unsplash.com/photo-1727307921080-e6ea98e19289?crop=entropy&cs=srgb&fm=jpg"
+  }
+}

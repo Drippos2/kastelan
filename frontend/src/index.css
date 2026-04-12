@@ -1,0 +1,212 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --color-primary: #3B82F6;
+    --color-primary-hover: #2563EB;
+    --color-secondary: #065F46;
+    --color-background: #FFFDF7;
+    --color-surface: #FFFFFF;
+    --color-text-main: #022C22;
+    --color-text-muted: #334155;
+    --color-accent-yellow: #10B981;
+    --color-dark-bg: #081C15;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+    background-color: var(--color-background);
+    color: var(--color-text-main);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.font-heading {
+    font-family: 'Playfair Display', serif;
+    letter-spacing: -0.02em;
+}
+
+.font-body {
+    font-family: 'Outfit', sans-serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-background);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-primary);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary-hover);
+}
+
+/* Glassmorphism header */
+.glass-header {
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    background: rgba(255, 253, 247, 0.88);
+    border-bottom: 1px solid rgba(6, 95, 70, 0.08);
+}
+
+/* Image hover effect */
+.img-hover {
+    transition: transform 0.7s ease-out;
+}
+
+.img-hover:hover {
+    transform: scale(1.05);
+}
+
+/* Button hover effect */
+.btn-hover {
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(217, 119, 87, 0.3);
+}
+
+/* Text shadow for hero */
+.text-shadow {
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Animation classes */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animation-delay-200 {
+    animation-delay: 0.2s;
+}
+
+.animation-delay-400 {
+    animation-delay: 0.4s;
+}
+
+.animation-delay-600 {
+    animation-delay: 0.6s;
+}
+
+/* Flag buttons */
+.flag-btn {
+    transition: all 0.2s ease;
+    opacity: 0.7;
+}
+
+.flag-btn:hover,
+.flag-btn.active {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* Card styles */
+.card-elegant {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(6, 95, 70, 0.08);
+    border: 1px solid rgba(6, 95, 70, 0.06);
+}
+
+/* Overline text style */
+.overline {
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+@layer base {
+    :root {
+        --background: 45 100% 98%;
+        --foreground: 160 90% 9%;
+        --card: 0 0% 100%;
+        --card-foreground: 160 90% 9%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 160 90% 9%;
+        --primary: 217 91% 60%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 160 90% 20%;
+        --secondary-foreground: 0 0% 100%;
+        --muted: 45 30% 95%;
+        --muted-foreground: 215 16% 27%;
+        --accent: 160 84% 39%;
+        --accent-foreground: 160 90% 9%;
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 160 10% 88%;
+        --input: 160 10% 88%;
+        --ring: 217 91% 60%;
+        --radius: 0.75rem;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+/* Mobile menu override */
+[data-testid="mobile-menu"] {
+    background-color: #081C15 !important;
+}
+
+[data-testid="mobile-menu"] button {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+[data-testid="mobile-menu"] button:hover {
+    color: #34D399 !important;
+}
+
+@layer base {
+    [data-debug-wrapper="true"] {
+        display: contents !important;
+    }
+}
