@@ -1045,20 +1045,27 @@ function App() {
     }
   };
 
-  // Review submit
-   const handleReviewSubmit = async (e) => {
+    const handleReviewSubmit = async (e) => {
     e.preventDefault();
     setReviewSending(true);
+
+    // Vytvoríme si presný objekt, ktorý posielame
+    const payload = {
+      author_name: reviewData.author_name, // Skontroluj, či backend nechce len "author"
+      rating: Number(reviewData.rating),   // Pre istotu zmeníme na číslo
+      text: reviewData.text,
+      language: language
+    };
+
     try {
-      await axios.post(`${API}/reviews`, {
-        ...reviewData,
-        language: language
-      });
+      await axios.post(`${API}/reviews`, payload);
+      
       toast.success(t.reviews.success);
       setReviewData({ author_name: "", rating: 5, text: "" });
-      setShowReviewForm(false); // Toto musí sedieť so stavom hore!
-      fetchReviews(); // Znovu načítame recenzie, aby sa hneď zobrazila tá nová
+      setShowReviewForm(false);
+      fetchReviews(); 
     } catch (error) {
+      console.error("Detail chyby:", error.response?.data); // Toto ti vypíše v F12 presne čo je zle
       toast.error(t.reviews.error);
     } finally {
       setReviewSending(false);
