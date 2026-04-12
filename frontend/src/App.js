@@ -1785,21 +1785,31 @@ function App() {
 
           <form onSubmit={handleReservationSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-8 rounded-3xl shadow-xl border border-slate-100">
             
-            {/* Room Selection */}
+            {/* Room Selection - Opravené pre mobily */}
             <div>
-              <Label>{t.reservation.room_label || "Vyberte izbu"}</Label>
-              <Select value={reservationData.room_id} onValueChange={(v) => setReservationData({...reservationData, room_id: v})}>
-                <SelectTrigger className="border-[#065F46]/20 focus:border-[#3B82F6] h-11" data-testid="reservation-room-select">
-                  <SelectValue placeholder=" Vyberte si izbu " />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1">Izba č. 1 (Dvojlôžková)</SelectItem>
-                  <SelectItem value="2">Izba č. 2 (Dvojlôžková)</SelectItem>
-                  <SelectItem value="3">Izba č. 3 (Štvorlôžková)</SelectItem>
-                  <SelectItem value="4">Izba č. 4 (Dvojlôžková)</SelectItem>
-                  <SelectItem value="5">Izba č. 5 (Dvojlôžková)</SelectItem>
-                </SelectContent>
-              </Select>
+              <Label className="text-[#065F46] mb-2 block font-medium">
+                {t.reservation.room_label || "Vyberte izbu"}
+              </Label>
+              <div className="relative">
+                <select
+                  value={reservationData.room_id}
+                  onChange={(e) => setReservationData({...reservationData, room_id: e.target.value})}
+                  className="w-full h-11 pl-3 pr-10 rounded-md border border-[#065F46]/20 bg-white text-sm focus:outline-none focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/20 appearance-none cursor-pointer"
+                  data-testid="reservation-room-select"
+                  required
+                >
+                  <option value="" disabled>{t.reservation.selectRoom || "Vyberte si izbu"}</option>
+                  <option value="1">Izba č. 1 (Dvojlôžková)</option>
+                  <option value="2">Izba č. 2 (Dvojlôžková)</option>
+                  <option value="3">Izba č. 3 (Štvorlôžková)</option>
+                  <option value="4">Izba č. 4 (Dvojlôžková)</option>
+                  <option value="5">Izba č. 5 (Dvojlôžková)</option>
+                </select>
+                {/* Vlastná šípka, aby to vyzeralo dobre */}
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#065F46]/50">
+                  <ChevronDown className="h-4 w-4" />
+                </div>
+              </div>
             </div>
 
             {/* Dátum Príchodu */}
