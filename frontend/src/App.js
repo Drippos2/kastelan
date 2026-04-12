@@ -1049,23 +1049,21 @@ function App() {
     e.preventDefault();
     setReviewSending(true);
 
-    // Vytvoríme si presný objekt, ktorý posielame
-    const payload = {
-      author_name: reviewData.author_name, // Skontroluj, či backend nechce len "author"
-      rating: Number(reviewData.rating),   // Pre istotu zmeníme na číslo
-      text: reviewData.text,
-      language: language
-    };
-
     try {
-      await axios.post(`${API}/reviews`, payload);
+      await axios.post(`${API}/reviews`, {
+        author: reviewData.author_name, // Skúsili sme zmeniť author_name na author
+        rating: Number(reviewData.rating),
+        text: reviewData.text,
+        language: language
+      });
       
       toast.success(t.reviews.success);
       setReviewData({ author_name: "", rating: 5, text: "" });
       setShowReviewForm(false);
       fetchReviews(); 
     } catch (error) {
-      console.error("Detail chyby:", error.response?.data); // Toto ti vypíše v F12 presne čo je zle
+      console.error("Server hovorí:", error.response?.data); 
+      // Ak ti vyskočí v konzole že "author is required", tak vieme kde je chyba
       toast.error(t.reviews.error);
     } finally {
       setReviewSending(false);
