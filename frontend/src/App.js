@@ -1045,27 +1045,32 @@ function App() {
     }
   };
 
-   const handleReviewSubmit = async (e) => {
-    e.preventDefault();
-    setReviewSending(true);
-    try {
-      await axios.post(`${API}/reviews`, {
-        author: reviewData.author_name, // Python chce "author"
-        rating: Number(reviewData.rating),
-        text: reviewData.text,
-        language: language
-      });
-      toast.success(t.reviews.success);
-      setReviewData({ author_name: "", rating: 5, text: "" });
-      setShowReviewForm(false);
-      fetchReviews(); // Toto hneď aktualizuje zoznam pod formulárom
-    } catch (error) {
-      console.error("Chyba:", error.response?.data);
-      toast.error(t.reviews.error);
-    } finally {
-      setReviewSending(false);
-    }
+  const handleReviewSubmit = async (e) => {
+  e.preventDefault();
+  setReviewSending(true);
+
+  // Vytvoríme dáta presne tak, ako ich chce tvoj server.py
+  const payload = {
+    author: reviewData.author_name, // Mapujeme author_name na author
+    rating: Number(reviewData.rating), // Musí to byť číslo
+    text: reviewData.text,
+    language: language || "SK"
   };
+
+  try {
+    await axios.post(`${API}/reviews`, payload);
+    toast.success(t.reviews.success);
+    setReviewData({ author_name: "", rating: 5, text: "" });
+    setShowReviewForm(false);
+    fetchReviews();
+  } catch (error) {
+    // Ak to zlyhá, uvidíš v F12 presne čo serveru vadí
+    console.error("CHYBA SERVERA:", error.response?.data);
+    toast.error(t.reviews.error);
+  } finally {
+    setReviewSending(false);
+  }
+};
 
   // Admin login
   const handleAdminLogin = async (e) => {

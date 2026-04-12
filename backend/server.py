@@ -99,9 +99,10 @@ class ReservationCreate(BaseModel):
     note: Optional[str] = None
 
 class ReviewCreate(BaseModel):
-    name: str
+    author: str  # zmenené z 'name'
     rating: int
-    comment: str
+    text: str    # zmenené z 'comment'
+    language: Optional[str] = "SK" # pridané políčko
 
 class ContactCreate(BaseModel):
     name: str
@@ -140,10 +141,11 @@ async def create_review(input: ReviewCreate):
     try:
         doc = {
             "id": str(uuid.uuid4()),
-            "name": input.name,
+            "author_name": input.author,  # Mapujeme author na author_name pre React
             "rating": input.rating,
-            "comment": input.comment,
-            "date": datetime.now(timezone.utc).isoformat(),
+            "text": input.text,           # Mapujeme text na text
+            "language": input.language,
+            "created_at": datetime.now(timezone.utc).isoformat(),
             "approved": True 
         }
         await db.reviews.insert_one(doc)
@@ -155,10 +157,31 @@ async def create_review(input: ReviewCreate):
 @api_router.get("/reviews")
 async def get_reviews():
     try:
-        reviews = await db.reviews.find({"approved": True}).to_list(length=100)
-        for r in reviews: r["_id"] = str(r["_id"])
+        # Zoradené od najnovších
+        reviews = await db.reviews.find({"approved": True}).sort("created_at", -1).to_list(length=100)
+        for r in reviews: 
+            r["_id"] = str(r["_id"])
+            # Poistka pre staré záznamy
+            if "author_name" not in r: r["author_name"] = r.get("name", "Hosť")
         return reviews
-    except Exception: return []
+    except Exception as e: 
+        logger.error(f"Chyba pri get_reviews: {e}")
+        return []
+
+# TENTO ENDPOINT TI CHÝBAL (Oprava chyby 404 v kalendári)
+@api_router.get("/reservations/occupied")
+async def get_occupied_dates():
+    try:
+        cursor = db.reservations.find({})
+        reservations = await cursor.to_list(length=1000)
+        occupied = []
+        for res in reservations:
+            if "check_in" in res: occupied.append(res["check_in"])
+            if "check_out" in res: occupied.append(res["check_out"])
+        return occupied
+    except Exception as e:
+        logger.error(f"Chyba dátumov: {e}")
+        return []
 
 # OPRAVENÝ KONTAKTNÝ ENDPOINT S EMAILOM
 @api_router.post("/contact")
