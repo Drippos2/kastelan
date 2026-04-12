@@ -1045,25 +1045,22 @@ function App() {
     }
   };
 
-    const handleReviewSubmit = async (e) => {
+   const handleReviewSubmit = async (e) => {
     e.preventDefault();
     setReviewSending(true);
-
     try {
       await axios.post(`${API}/reviews`, {
-        author: reviewData.author_name, // Skúsili sme zmeniť author_name na author
+        author: reviewData.author_name, // Python chce "author"
         rating: Number(reviewData.rating),
         text: reviewData.text,
         language: language
       });
-      
       toast.success(t.reviews.success);
       setReviewData({ author_name: "", rating: 5, text: "" });
       setShowReviewForm(false);
-      fetchReviews(); 
+      fetchReviews(); // Toto hneď aktualizuje zoznam pod formulárom
     } catch (error) {
-      console.error("Server hovorí:", error.response?.data); 
-      // Ak ti vyskočí v konzole že "author is required", tak vieme kde je chyba
+      console.error("Chyba:", error.response?.data);
       toast.error(t.reviews.error);
     } finally {
       setReviewSending(false);

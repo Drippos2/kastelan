@@ -180,18 +180,44 @@ async def create_contact(input: ContactCreate):
         logger.error(f"❌ CHYBA KONTAKTU: {e}")
         raise HTTPException(status_code=500, detail="Chyba pri ukladaní správy.")
 
-# ADMIN ENDPOINTY
+# --- ADMIN ENDPOINTY (Rezervácie aj Kontakty) ---
+
+# 1. KONTAKTY (Správy z formulára)
 @api_router.get("/admin/contacts")
 async def get_admin_contacts():
     contacts = await db.contacts.find().sort("created_at", -1).to_list(length=100)
-    for c in contacts: c["_id"] = str(c["_id"])
+    for c in contacts: 
+        c["id"] = str(c["_id"])
+        c["_id"] = str(c["_id"])
     return contacts
 
+@api_router.delete("/admin/contacts/{id}")
+async def delete_contact(id: str):
+    from bson import ObjectId
+    try:
+        await db.contacts.delete_one({"_id": ObjectId(id)})
+        return {"status": "success"}
+    except:
+        raise HTTPException(status_code=500, detail="Chyba pri mazaní kontaktu")
+
+# 2. REZERVÁCIE
 @api_router.get("/admin/reservations")
 async def get_admin_reservations():
     res = await db.reservations.find().sort("created_at", -1).to_list(length=100)
-    for r in res: r["_id"] = str(r["_id"])
+    for r in res: 
+        r["id"] = str(r["_id"])
+        r["_id"] = str(r["_id"])
     return res
+
+@api_router.delete("/admin/reservations/{id}")
+async def delete_reservation(id: str):
+    from bson import ObjectId
+    try:
+        # Toto vymaže tú Invalid Date rezerváciu podľa jej ID
+        await db.reservations.delete_one({"_id": ObjectId(id)})
+        return {"status": "success"}
+    except:
+        raise HTTPException(status_code=500, detail="Chyba pri mazaní rezervácie")
 
 app.include_router(api_router)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
