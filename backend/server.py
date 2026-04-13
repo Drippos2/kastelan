@@ -82,17 +82,20 @@ async def send_reservation_emails(res_data: dict):
             </div>
         </div>
         """
-        resend.Emails.send({"from": "Penzión Kastelán <info@send.penzionkastelan.sk>", "to": [NOTIFICATION_EMAIL], "subject": f"Nová rezervácia - {res_data['guest_name']}", "html": owner_html})
+        # ZMENA: info@send.penzionkastelan.sk -> info@penzionkastelan.sk
+        resend.Emails.send({"from": "Penzión Kastelán <info@penzionkastelan.sk>", "to": [NOTIFICATION_EMAIL], "subject": f"Nová rezervácia - {res_data['guest_name']}", "html": owner_html})
         
         guest_html = f"<div style='font-family: sans-serif; padding: 20px;'><h2>Dobrý deň, {res_data['guest_name']},</h2><p>Prijali sme vašu žiadosť o rezerváciu ({res_data['check_in']} - {res_data['check_out']}). O potvrdení vás budeme informovať.</p></div>"
-        resend.Emails.send({"from": "Penzión Kastelán <info@send.penzionkastelan.sk>", "to": [res_data['guest_email']], "subject": "Prijatie rezervácie - Penzión Kastelán", "html": guest_html})
+        # ZMENA: info@send.penzionkastelan.sk -> info@penzionkastelan.sk
+        resend.Emails.send({"from": "Penzión Kastelán <info@penzionkastelan.sk>", "to": [res_data['guest_email']], "subject": "Prijatie rezervácie - Penzión Kastelán", "html": guest_html})
     except Exception as e:
         logger.error(f"E-mail error: {e}")
 
 async def send_contact_email(contact_data: dict):
     try:
         html_msg = f"<div><h2>Správa z webu</h2><p>Od: {contact_data['name']}</p><p>{contact_data['message']}</p></div>"
-        resend.Emails.send({"from": "Penzión Kastelán <info@send.penzionkastelan.sk>", "to": [NOTIFICATION_EMAIL], "subject": "Nová správa", "html": html_msg})
+        # ZMENA: info@send.penzionkastelan.sk -> info@penzionkastelan.sk
+        resend.Emails.send({"from": "Penzión Kastelán <info@penzionkastelan.sk>", "to": [NOTIFICATION_EMAIL], "subject": "Nová správa", "html": html_msg})
     except Exception as e:
         logger.error(f"Contact e-mail error: {e}")
 
