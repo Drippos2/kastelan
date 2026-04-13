@@ -40,9 +40,9 @@ ROOM_NAMES = {1: "Izba č.1", 2: "Izba č.2", 3: "Izba č.3", 4: "Izba č.4", 5:
 # --- 4. Modely dát ---
 class ReservationCreate(BaseModel):
     room_id: int
-    guest_name: str
+    guest_name: str = Field(..., min_length=2)
     guest_email: EmailStr
-    guest_phone: str
+    guest_phone: str = Field(..., min_length=5)
     check_in: str
     check_out: str
     guests: int
