@@ -11,6 +11,7 @@ from typing import List, Optional
 from pathlib import Path
 
 from fastapi import FastAPI, APIRouter, HTTPException, Request
+from fastapi.responses import HTMLResponse # Pridané pre emailové odpovede
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel, Field, EmailStr
@@ -30,6 +31,9 @@ MONGO_URL = os.getenv('MONGO_URL')
 DB_NAME = os.getenv('DB_NAME', 'kastelan_db')
 JWT_SECRET = os.getenv("JWT_SECRET", "tajne-heslo")
 
+# DÔLEŽITÉ: Zmeň túto URL na tvoju skutočnú adresu backendu na Renderi!
+BASE_URL = "https://kastelan.onrender.com/api"
+
 # --- 3. Pripojenie k MongoDB ---
 client = AsyncIOMotorClient(MONGO_URL)
 db = client[DB_NAME]
@@ -40,14 +44,28 @@ ROOM_NAMES = {1: "Izba č.1", 2: "Izba č.2", 3: "Izba č.3", 4: "Izba č.4", 5:
 async def send_reservation_email(res_data: dict):
     try:
         room = ROOM_NAMES.get(res_data["room_id"], "Izba")
+        res_id = res_data["id"]
+        
         html_msg = f"""
-        <div style="font-family: sans-serif; padding: 20px; border: 1px solid #ddd;">
+        <div style="font-family: sans-serif; padding: 20px; border: 1px solid #ddd; max-width: 600px;">
             <h2 style="color: #065F46;">Nová rezervácia - Penzión Kastelán</h2>
             <p><strong>Hosť:</strong> {res_data['guest_name']}</p>
             <p><strong>Izba:</strong> {room}</p>
             <p><strong>Termín:</strong> {res_data['check_in']} až {res_data['check_out']}</p>
             <p><strong>E-mail hosťa:</strong> {res_data['guest_email']}</p>
             <p><strong>Telefón:</strong> {res_data['guest_phone']}</p>
+            <hr />
+            <div style="text-align: center; padding: 20px;">
+                <p><strong>Chcete potvrdiť túto rezerváciu a zablokovať termín v kalendári?</strong></p>
+                <a href="{BASE_URL}/reservations/confirm/{res_id}" 
+                   style="background-color: #065F46; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-right: 10px; display: inline-block;">
+                   ✅ POTVRDIŤ
+                </a>
+                <a href="{BASE_URL}/reservations/delete/{res_id}" 
+                   style="background-color: #ef4444; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                   ❌ ZAMIETNUŤ
+                </a>
+            </div>
         </div>
         """
         params = {
@@ -135,6 +153,28 @@ async def create_reservation(input: ReservationCreate):
         logger.error(f"❌ CHYBA DATABÁZY: {e}")
         raise HTTPException(status_code=500, detail="Chyba databázy")
 
+# --- EMAILOVÉ POTVRDZOVANIE (Nová logika) ---
+@api_router.get("/reservations/confirm/{res_id}", response_class=HTMLResponse)
+async def email_confirm_reservation(res_id: str):
+    try:
+        result = await db.reservations.update_one(
+            {"id": res_id}, 
+            {"$set": {"status": "confirmed"}}
+        )
+        if result.modified_count > 0:
+            return "<html><body style='text-align:center;padding:50px;'><h1>✅ Rezervácia potvrdená</h1><p>Termín bol zablokovaný v kalendári.</p></body></html>"
+        return "<html><body><h1>Rezervácia už bola potvrdená alebo neexistuje.</h1></body></html>"
+    except Exception as e:
+        return f"<h1>Chyba: {str(e)}</h1>"
+
+@api_router.get("/reservations/delete/{res_id}", response_class=HTMLResponse)
+async def email_delete_reservation(res_id: str):
+    try:
+        await db.reservations.delete_one({"id": res_id})
+        return "<html><body style='text-align:center;padding:50px;'><h1>❌ Rezervácia zrušená</h1><p>Záznam bol odstránený.</p></body></html>"
+    except Exception as e:
+        return f"<h1>Chyba: {str(e)}</h1>"
+
 @api_router.post("/reviews")
 async def create_review(input: ReviewCreate):
     try:
@@ -165,21 +205,18 @@ async def get_reviews():
         logger.error(f"Chyba pri get_reviews: {e}")
         return []
 
-# --- TU JE OPRAVENÁ LOGIKA OBSADENOSTI ---
 @api_router.get("/reservations/occupied")
 async def get_occupied_dates():
     try:
-        cursor = db.reservations.find({})
+        # PRIDANÝ FILTER: Kalendár blokuje len POTVRDENÉ rezervácie
+        cursor = db.reservations.find({"status": "confirmed"})
         reservations = await cursor.to_list(length=1000)
         occupied_dates = []
         
         for res in reservations:
             try:
-                # Prevedieme stringy "YYYY-MM-DD" na dátumy
                 start = datetime.strptime(res["check_in"], "%Y-%m-%d")
                 end = datetime.strptime(res["check_out"], "%Y-%m-%d")
-                
-                # Vygenerujeme VŠETKY dni medzi príchodom a odchodom
                 current = start
                 while current <= end:
                     occupied_dates.append(current.strftime("%Y-%m-%d"))
@@ -187,7 +224,6 @@ async def get_occupied_dates():
             except:
                 continue
                 
-        # List(Set()) odstráni duplicity, ak sa rezervácie prekrývajú
         return list(set(occupied_dates))
     except Exception as e:
         logger.error(f"Chyba dátumov: {e}")
