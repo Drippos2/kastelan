@@ -23,8 +23,11 @@
     box-sizing: border-box;
 }
 
+/* UPRAVENÁ ČASŤ */
 html {
     scroll-behavior: smooth;
+    max-width: 100%;       /* Pridané pre opravu utekania */
+    overflow-x: hidden;    /* Pridané pre opravu utekania */
 }
 
 body {
@@ -34,6 +37,13 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.6;
+    max-width: 100%;       /* Pridané pre opravu utekania */
+    overflow-x: hidden;    /* Pridané pre opravu utekania */
+    position: relative;    /* Pridané pre lepšiu stabilitu */
+}
+
+* {
+    max-width: 100%;
 }
 
 h1, h2, h3, h4, h5, h6 {
