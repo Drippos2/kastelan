@@ -1734,16 +1734,33 @@ function App() {
       {/* Activities Section */}
       <section id="activities" className="py-16 md:py-32 bg-[#081C15]" data-testid="activities-section">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="text-center mb-12 md:mb-16 fade-in-up">
-            <p className="text-[#34D399] font-medium tracking-widest uppercase text-sm mb-4">
-              {t.activities.overline}
-            </p>
-            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-white mb-4">
-              {t.activities.title}
-            </h2>
-            <p className="text-white/70 text-base md:text-lg max-w-2xl mx-auto">
-              {t.activities.description}
-            </p>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-12 md:mb-16">
+            <div className="text-left fade-in-up">
+              <p className="text-[#34D399] font-medium tracking-widest uppercase text-sm mb-4">
+                {t.activities.overline}
+              </p>
+              <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-white mb-4">
+                {t.activities.title}
+              </h2>
+              <p className="text-white/70 text-base md:text-lg max-w-2xl">
+                {t.activities.description}
+              </p>
+            </div>
+            
+            {/* YouTube Video vpravo hore */}
+            <div className="fade-in-up delay-200">
+              <div className="w-full aspect-video rounded-2xl overflow-hidden shadow-2xl border border-white/10">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src="https://www.youtube.com/embed/VD983mD6k1s"
+                  title="Penzión Kastelán Bojnice"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                ></iframe>
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 stagger-children">
