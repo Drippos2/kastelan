@@ -124,8 +124,13 @@ async def email_delete_reservation(res_id: str, token: str = None):
     return "<html><body style='text-align:center;padding:50px;'><h1>❌ Rezervácia zrušená</h1></body></html>"
 
 @api_router.get("/reservations/occupied")
-async def get_occupied_dates():
-    cursor = db.reservations.find({"status": "confirmed"})
+async def get_occupied_dates(room_id: int): # Pridali sme parameter room_id
+    # Teraz hľadáme len rezervácie pre konkrétnu izbu, ktorá nás zaujíma
+    cursor = db.reservations.find({
+        "status": "confirmed",
+        "room_id": room_id  # TU JE TÁ LOGIKA: Filtrujeme podľa ID izby
+    })
+    
     reservations = await cursor.to_list(length=1000)
     occupied = []
     for res in reservations:

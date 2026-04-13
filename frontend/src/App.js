@@ -963,15 +963,16 @@ function App() {
     }
   }, [API]);
 
-  const fetchBookedDates = useCallback(async () => {
-    try {
-      const res = await axios.get(`${API}/reservations/occupied`);
-      // Očakávame pole stringov ["2024-04-12", "2024-04-13", ...]
-      setBookedDates(Array.isArray(res.data) ? res.data : []);
-    } catch (e) { 
-      console.error("Chyba načítania obsadených termínov"); 
-    }
-  }, [API]);
+const fetchBookedDates = useCallback(async (roomId) => {
+  if (!roomId) return; // Ak nie je vybraná izba, nič nesťahuj
+  try {
+    // Pridali sme ?room_id= na koniec adresy
+    const res = await axios.get(`${API}/reservations/occupied?room_id=${roomId}`);
+    setBookedDates(Array.isArray(res.data) ? res.data : []);
+  } catch (e) { 
+    console.error("Chyba načítania obsadených termínov"); 
+  }
+}, [API]);
 
   // Funkcia, ktorá zakáže dátumy v kalendári
   const isDateDisabled = (date) => {
@@ -989,11 +990,19 @@ function App() {
   
   // --- 4. EFEKTY ---
   
-  // Načítanie dát pri prvom zobrazení stránky
-  useEffect(() => {
-    fetchReviews();
-    fetchBookedDates();
-  }, [fetchReviews, fetchBookedDates]);
+// 1. Recenzie stiahneme hneď pri načítaní webu
+useEffect(() => {
+  fetchReviews();
+}, [fetchReviews]);
+
+// 2. Kalendár stiahneme/aktualizujeme vždy, keď hosť zmení izbu
+useEffect(() => {
+  if (reservationData.room_id) {
+    fetchBookedDates(reservationData.room_id);
+  } else {
+    setBookedDates([]); // Ak nie je vybraná izba, kalendár bude "čistý"
+  }
+}, [reservationData.room_id, fetchBookedDates]);
 
   // Ostatné tvoje efekty (Slider, Scroll, Observer...)
   useEffect(() => {
