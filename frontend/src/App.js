@@ -149,8 +149,8 @@ const translations = {
       spaDesc: "Termálne kúpalisko a procedúry",
       falcon: "Sokoliarske vystúpenia",
       falconDesc: "Unikátne predstavenia v amfiteátri",
-      horse: "Jazda na koni",
-      horseDesc: "Aktivity pre milovníkov koní",
+      horse: "E-Bicykle",
+      horseDesc: "Aktivity pre milovnikov bicyklov",
       museum: "Múzeum praveku",
       museumDesc: "Prepoštská jaskyňa"
     },
