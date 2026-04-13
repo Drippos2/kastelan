@@ -123,7 +123,7 @@ const translations = {
       description: "Krásne prostredie a záhrada pre váš relax",
       comingSoon: "Fotografie čoskoro"
     },
-    services: {
+      services: {
       overline: "Služby",
       title: "Čo ponúkame",
       parking: "Parkovanie",
@@ -133,7 +133,9 @@ const translations = {
       ebike: "E-bicykle",
       ebikeDesc: "10% zľava na požičanie e-bicyklov",
       restaurant: "Stravovanie",
-      restaurantDesc: "Reštaurácie na námestí (cca 250 m)"
+      restaurantDesc: "Reštaurácie na námestí (cca 250 m)",
+      gumiland: "Gumiland",
+      gumilandDesc: "Zábavný park pre deti aj dospelých (cca 200 m)"
     },
     activities: {
       overline: "Okolie",
@@ -310,17 +312,19 @@ const translations = {
       description: "Beautiful environment and garden for your relaxation",
       comingSoon: "Photos coming soon"
     },
-    services: {
+      services: {
       overline: "Services",
       title: "What We Offer",
       parking: "Parking",
-      parkingDesc: "Secure parking in enclosed area",
+      parkingDesc: "Secure parking within a private gated area",
       garden: "Garden",
-      gardenDesc: "BBQ and garden seating available",
+      gardenDesc: "BBQ facilities and cozy garden seating",
       ebike: "E-bikes",
-      ebikeDesc: "10% discount on e-bike rental",
+      ebikeDesc: "10% discount on electric bike rentals",
       restaurant: "Dining",
-      restaurantDesc: "Restaurants at the square (approx. 250 m)"
+      restaurantDesc: "Restaurants at the main square (approx. 250 m)",
+      gumiland: "Gumiland",
+      gumilandDesc: "Amusement park for kids and adults (only 200 m away)"
     },
     activities: {
       overline: "Surroundings",
@@ -497,17 +501,19 @@ const translations = {
       description: "Schöne Umgebung und Garten für Ihre Entspannung",
       comingSoon: "Fotos folgen"
     },
-    services: {
+      services: {
       overline: "Dienstleistungen",
       title: "Was wir bieten",
       parking: "Parkplatz",
-      parkingDesc: "Sicherer Parkplatz im geschlossenen Bereich",
+      parkingDesc: "Sicherer Parkplatz auf dem abgeschlossenen Gelände",
       garden: "Garten",
-      gardenDesc: "Grill- und Gartensitzmöglichkeiten",
+      gardenDesc: "Grillmöglichkeit und gemütliche Sitzbereiche im Garten",
       ebike: "E-Bikes",
-      ebikeDesc: "10% Rabatt auf E-Bike-Verleih",
+      ebikeDesc: "10% Rabatt auf den E-Bike-Verleih",
       restaurant: "Verpflegung",
-      restaurantDesc: "Restaurants am Platz (ca. 250 m)"
+      restaurantDesc: "Restaurants direkt am Stadtplatz (ca. 250 m)",
+      gumiland: "Gumiland",
+      gumilandDesc: "Freizeitpark für Kinder und Erwachsene (nur 200 m entfernt)"
     },
     activities: {
       overline: "Umgebung",
@@ -1663,46 +1669,64 @@ function App() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 stagger-children">
+          {/* ZMENA: pridané lg:grid-cols-5 pre 5 kariet v rade */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6 stagger-children">
+            
+            {/* Parkovanie */}
             <div className="card-3d fade-in-scale">
               <div className="card-3d-inner card-elegant service-card-3d p-6 text-center">
                 <div className="service-icon mx-auto mb-4">
                   <Car className="w-6 h-6" />
                 </div>
-                <h3 className="font-heading text-lg md:text-xl text-[#065F46] mb-2">{t.services.parking}</h3>
+                <h3 className="font-heading text-lg text-[#065F46] mb-2">{t.services.parking}</h3>
                 <p className="text-[#334155] text-sm">{t.services.parkingDesc}</p>
               </div>
             </div>
 
+            {/* Záhrada */}
             <div className="card-3d fade-in-scale">
               <div className="card-3d-inner card-elegant service-card-3d p-6 text-center">
                 <div className="service-icon mx-auto mb-4">
                   <Flame className="w-6 h-6" />
                 </div>
-                <h3 className="font-heading text-lg md:text-xl text-[#065F46] mb-2">{t.services.garden}</h3>
+                <h3 className="font-heading text-lg text-[#065F46] mb-2">{t.services.garden}</h3>
                 <p className="text-[#334155] text-sm">{t.services.gardenDesc}</p>
               </div>
             </div>
 
+            {/* Gumiland - NOVINKA v strede pre balans */}
+            <div className="card-3d fade-in-scale">
+              <div className="card-3d-inner card-elegant service-card-3d p-6 text-center border-2 border-[#065F46]/10">
+                <div className="service-icon mx-auto mb-4 bg-[#065F46]/5">
+                  <Castle className="w-6 h-6 text-[#065F46]" />
+                </div>
+                <h3 className="font-heading text-lg text-[#065F46] mb-2">{t.services.gumiland}</h3>
+                <p className="text-[#334155] text-sm">{t.services.gumilandDesc}</p>
+              </div>
+            </div>
+
+            {/* E-bicykle */}
             <div className="card-3d fade-in-scale">
               <div className="card-3d-inner card-elegant service-card-3d p-6 text-center">
                 <div className="service-icon mx-auto mb-4">
                   <Bike className="w-6 h-6" />
                 </div>
-                <h3 className="font-heading text-lg md:text-xl text-[#065F46] mb-2">{t.services.ebike}</h3>
+                <h3 className="font-heading text-lg text-[#065F46] mb-2">{t.services.ebike}</h3>
                 <p className="text-[#334155] text-sm">{t.services.ebikeDesc}</p>
               </div>
             </div>
 
+            {/* Stravovanie */}
             <div className="card-3d fade-in-scale">
               <div className="card-3d-inner card-elegant service-card-3d p-6 text-center">
                 <div className="service-icon mx-auto mb-4">
                   <Coffee className="w-6 h-6" />
                 </div>
-                <h3 className="font-heading text-lg md:text-xl text-[#065F46] mb-2">{t.services.restaurant}</h3>
+                <h3 className="font-heading text-lg text-[#065F46] mb-2">{t.services.restaurant}</h3>
                 <p className="text-[#334155] text-sm">{t.services.restaurantDesc}</p>
               </div>
             </div>
+
           </div>
         </div>
       </section>
