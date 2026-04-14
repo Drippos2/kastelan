@@ -1597,6 +1597,59 @@ useEffect(() => {
         </div>
       </section>
 
+      {/* Sekcia Ďalšie - vložiť medzi Kitchen a Services */}
+      <section id="others" className="py-16 md:py-32 bg-gray-50" data-testid="others-section">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="text-center mb-12">
+            <p className="overline mb-4">Galéria</p>
+            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-[#065F46] mb-4">
+              Ďalšie priestory
+            </h2>
+            <p className="text-[#334155] text-base md:text-lg max-w-2xl mx-auto">
+              Nahliadnite do ďalších zákutí nášho penziónu, ktoré dotvárajú celkovú atmosféru vášho pobytu.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            <div className="aspect-square rounded-2xl overflow-hidden shadow-sm">
+              <img 
+                src="/images/ostatne/1.jpg" 
+                alt="Penzión priestory 1" 
+                className="w-full h-full object-cover img-hover" 
+              />
+            </div>
+            <div className="aspect-square rounded-2xl overflow-hidden shadow-sm">
+              <img 
+                src="/images/ostatne/2.jpg" 
+                alt="Penzión priestory 2" 
+                className="w-full h-full object-cover img-hover" 
+              />
+            </div>
+            <div className="aspect-square rounded-2xl overflow-hidden shadow-sm">
+              <img 
+                src="/images/ostatne/3.jpg" 
+                alt="Penzión priestory 3" 
+                className="w-full h-full object-cover img-hover" 
+              />
+            </div>
+            <div className="aspect-square rounded-2xl overflow-hidden shadow-sm">
+              <img 
+                src="/images/ostatne/4.jpg" 
+                alt="Penzión priestory 4" 
+                className="w-full h-full object-cover img-hover" 
+              />
+            </div>
+            <div className="aspect-square rounded-2xl overflow-hidden shadow-sm">
+              <img 
+                src="/images/ostatne/5.jpg" 
+                alt="Penzión priestory 5" 
+                className="w-full h-full object-cover img-hover" 
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
        {/* Kitchen Section */}
       <section id="kitchen" className="py-16 md:py-32" data-testid="kitchen-section">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
