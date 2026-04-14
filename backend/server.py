@@ -27,7 +27,6 @@ NOTIFICATION_EMAIL = os.getenv("NOTIFICATION_EMAIL", "info@penzionkastelan.sk")
 MONGO_URL = os.getenv('MONGO_URL')
 DB_NAME = os.getenv('DB_NAME', 'kastelan_db')
 
-# DÔLEŽITÉ: BASE_URL bez /api na konci, pretože prefix sa pridá automaticky
 BASE_URL = "https://kastelan.onrender.com"
 ADMIN_SECRET_TOKEN = "Kastelan123654" 
 
@@ -69,33 +68,69 @@ async def send_reservation_emails(res_data: dict):
         confirm_url = f"{BASE_URL}/api/reservations/confirm/{res_id}?token={ADMIN_SECRET_TOKEN}"
         delete_url = f"{BASE_URL}/api/reservations/delete/{res_id}?token={ADMIN_SECRET_TOKEN}"
 
+        # HTML Šablóna pre majiteľa so všetkými údajmi
         owner_html = f"""
         <div style="font-family: sans-serif; padding: 20px; border: 1px solid #ddd; max-width: 600px; border-radius: 10px;">
             <h2 style="color: #065F46;">Nová rezervácia - Penzión Kastelán</h2>
             <p><strong>Hosť:</strong> {res_data['guest_name']}</p>
+            <p><strong>E-mail:</strong> <a href="mailto:{res_data['guest_email']}">{res_data['guest_email']}</a></p>
+            <p><strong>Telefón:</strong> <a href="tel:{res_data['guest_phone']}">{res_data['guest_phone']}</a></p>
             <p><strong>Izba:</strong> {room}</p>
             <p><strong>Termín:</strong> {res_data['check_in']} až {res_data['check_out']}</p>
+            <p><strong>Počet hostí:</strong> {res_data['guests']}</p>
+            <p><strong>Poznámka:</strong> {res_data.get('note', 'Žiadna')}</p>
             <hr />
             <div style="text-align: center; padding: 20px;">
-                <a href="{confirm_url}" style="background-color: #065F46; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">✅ POTVRDIŤ</a>
+                <a href="{confirm_url}" style="background-color: #065F46; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-right: 10px;">✅ POTVRDIŤ</a>
                 <a href="{delete_url}" style="background-color: #ef4444; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">❌ ZAMIETNUŤ</a>
             </div>
         </div>
         """
-        # ZMENA: info@send.penzionkastelan.sk -> info@penzionkastelan.sk
-        resend.Emails.send({"from": "Penzión Kastelán <info@penzionkastelan.sk>", "to": [NOTIFICATION_EMAIL], "subject": f"Nová rezervácia - {res_data['guest_name']}", "html": owner_html})
         
-        guest_html = f"<div style='font-family: sans-serif; padding: 20px;'><h2>Dobrý deň, {res_data['guest_name']},</h2><p>Prijali sme vašu žiadosť o rezerváciu ({res_data['check_in']} - {res_data['check_out']}). O potvrdení vás budeme informovať.</p></div>"
-        # ZMENA: info@send.penzionkastelan.sk -> info@penzionkastelan.sk
-        resend.Emails.send({"from": "Penzión Kastelán <info@penzionkastelan.sk>", "to": [res_data['guest_email']], "subject": "Prijatie rezervácie - Penzión Kastelán", "html": guest_html})
+        # Odoslanie majiteľovi
+        resend.Emails.send({
+            "from": "Penzión Kastelán <info@penzionkastelan.sk>", 
+            "to": [NOTIFICATION_EMAIL], 
+            "subject": f"Nová rezervácia - {res_data['guest_name']}", 
+            "html": owner_html
+        })
+        
+        # Odoslanie potvrdenia hosťovi
+        guest_html = f"""
+        <div style='font-family: sans-serif; padding: 20px;'>
+            <h2>Dobrý deň, {res_data['guest_name']},</h2>
+            <p>Prijali sme vašu žiadosť o rezerváciu na termín {res_data['check_in']} - {res_data['check_out']}.</p>
+            <p>O potvrdení vás budeme čoskoro informovať.</p>
+        </div>
+        """
+        resend.Emails.send({
+            "from": "Penzión Kastelán <info@penzionkastelan.sk>", 
+            "to": [res_data['guest_email']], 
+            "subject": "Prijatie rezervácie - Penzión Kastelán", 
+            "html": guest_html
+        })
     except Exception as e:
         logger.error(f"E-mail error: {e}")
 
 async def send_contact_email(contact_data: dict):
     try:
-        html_msg = f"<div><h2>Správa z webu</h2><p>Od: {contact_data['name']}</p><p>{contact_data['message']}</p></div>"
-        # ZMENA: info@send.penzionkastelan.sk -> info@penzionkastelan.sk
-        resend.Emails.send({"from": "Penzión Kastelán <info@penzionkastelan.sk>", "to": [NOTIFICATION_EMAIL], "subject": "Nová správa", "html": html_msg})
+        html_msg = f"""
+        <div style="font-family: sans-serif; padding: 20px;">
+            <h2>Nová správa z webu</h2>
+            <p><strong>Meno:</strong> {contact_data['name']}</p>
+            <p><strong>E-mail:</strong> {contact_data['email']}</p>
+            <p><strong>Telefón:</strong> {contact_data.get('phone', 'Neuvedený')}</p>
+            <hr />
+            <p><strong>Správa:</strong></p>
+            <p>{contact_data['message']}</p>
+        </div>
+        """
+        resend.Emails.send({
+            "from": "Penzión Kastelán <info@penzionkastelan.sk>", 
+            "to": [NOTIFICATION_EMAIL], 
+            "subject": f"Nová správa - {contact_data['name']}", 
+            "html": html_msg
+        })
     except Exception as e:
         logger.error(f"Contact e-mail error: {e}")
 
@@ -104,7 +139,19 @@ api_router = APIRouter(prefix="/api")
 
 @api_router.post("/reservations")
 async def create_reservation(input: ReservationCreate):
-    doc = {"id": str(uuid.uuid4()), "room_id": input.room_id, "guest_name": input.guest_name, "guest_email": input.guest_email, "guest_phone": input.guest_phone, "check_in": input.check_in, "check_out": input.check_out, "guests": input.guests, "note": input.note, "status": "pending", "created_at": datetime.now(timezone.utc).isoformat()}
+    doc = {
+        "id": str(uuid.uuid4()), 
+        "room_id": input.room_id, 
+        "guest_name": input.guest_name, 
+        "guest_email": input.guest_email, 
+        "guest_phone": input.guest_phone, 
+        "check_in": input.check_in, 
+        "check_out": input.check_out, 
+        "guests": input.guests, 
+        "note": input.note, 
+        "status": "pending", 
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
     await db.reservations.insert_one(doc)
     asyncio.create_task(send_reservation_emails(doc))
     return {"status": "success"}
@@ -124,13 +171,11 @@ async def email_delete_reservation(res_id: str, token: str = None):
     return "<html><body style='text-align:center;padding:50px;'><h1>❌ Rezervácia zrušená</h1></body></html>"
 
 @api_router.get("/reservations/occupied")
-async def get_occupied_dates(room_id: int): # Pridali sme parameter room_id
-    # Teraz hľadáme len rezervácie pre konkrétnu izbu, ktorá nás zaujíma
+async def get_occupied_dates(room_id: int):
     cursor = db.reservations.find({
         "status": "confirmed",
-        "room_id": room_id  # TU JE TÁ LOGIKA: Filtrujeme podľa ID izby
+        "room_id": room_id
     })
-    
     reservations = await cursor.to_list(length=1000)
     occupied = []
     for res in reservations:
