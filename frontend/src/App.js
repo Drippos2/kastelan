@@ -639,6 +639,13 @@ const roomsData = [
   {
     id: 1,
     photos: [
+      "/images/izba1/izba1.jpg",
+      "/images/izba1/izba2.jpg",
+      "/images/izba1/izba3.jpg",
+      "/images/izba1/izba4.jpg",
+      "/images/izba1/izba5.jpg",
+      "/images/izba1/izba6.jpg",
+
       "/images/izba1/1.jpg",
       "/images/izba1/1.2.jpg",
       "/images/izba1/1.3.jpg",
@@ -657,6 +664,9 @@ const roomsData = [
   {
     id: 2,
     photos: [
+      "/images/izba2/izba1.jpg",
+      "/images/izba2/izba2.jpg",
+
       "/images/izba2/1.jpg",
       "/images/izba2/2.jpg",
       "/images/izba2/3.jpg",
@@ -674,6 +684,17 @@ const roomsData = [
   {
     id: 3,
     photos: [
+      "/images/izba3/izba1.jpg",
+      "/images/izba3/izba2.jpg",
+      "/images/izba3/izba3.jpg",
+      "/images/izba3/izba4.jpg",
+      "/images/izba3/izba5.jpg",
+      "/images/izba3/izba6.jpg",
+      "/images/izba3/izba7.jpg",
+      "/images/izba3/izba8.jpg",
+      "/images/izba3/izba9.jpg",
+      "/images/izba3/izba10.jpg",
+
       "/images/izba3/1.jpg",
       "/images/izba3/2.jpg",
       "/images/izba3/3.jpg",
@@ -690,6 +711,11 @@ const roomsData = [
   {
     id: 4,
     photos: [
+      "/images/izba4/izba1.jpg",
+      "/images/izba4/izba2.jpg",
+      "/images/izba4/izba3.jpg",
+      "/images/izba4/izba4.jpg",
+
       "/images/izba4/1.jpg",
       "/images/izba4/2.jpg",
       "/images/izba4/3.jpg",
@@ -704,6 +730,11 @@ const roomsData = [
   {
     id: 5,
     photos: [
+      "/images/izba5/izba1.jpg",
+      "/images/izba5/izba2.jpg",
+      "/images/izba5/izba3.jpg",
+      "/images/izba5/izba4.jpg",
+
       "/images/izba5/1.jpg",
       "/images/izba5/2.jpg",
       "/images/izba5/3.jpg",
