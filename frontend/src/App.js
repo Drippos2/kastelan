@@ -1641,22 +1641,44 @@ useEffect(() => {
             </p>
           </div>
 
-          {/* Main exterior image */}
-          <div className="aspect-video md:aspect-[21/9] rounded-2xl overflow-hidden mb-4 md:mb-6">
-            <img 
-              src="/images/exterier/1.jpg" 
-              alt="Exteriér penziónu"
-              className="w-full h-full object-cover img-hover"
-            />
+          {/* NOVÉ FOTKY EXTERIÉRU (ex1 až ex6) */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6">
+            <div className="md:col-span-2 aspect-video md:aspect-[16/10] rounded-2xl overflow-hidden">
+              <img 
+                src="/images/exterier/ex1.jpg" 
+                alt="Exteriér nová hlavná"
+                className="w-full h-full object-cover img-hover"
+              />
+            </div>
+            <div className="grid grid-rows-2 gap-4 md:gap-6">
+              <div className="aspect-video md:aspect-auto rounded-2xl overflow-hidden">
+                <img src="/images/exterier/ex2.jpg" alt="Exteriér detail 1" className="w-full h-full object-cover img-hover" />
+              </div>
+              <div className="aspect-video md:aspect-auto rounded-2xl overflow-hidden">
+                <img src="/images/exterier/ex3.jpg" alt="Exteriér detail 2" className="w-full h-full object-cover img-hover" />
+              </div>
+            </div>
           </div>
 
-          {/* Grid of exterior images */}
+          <div className="grid grid-cols-3 gap-4 md:gap-6 mb-12">
+            <div className="aspect-video rounded-2xl overflow-hidden">
+              <img src="/images/exterier/ex4.jpg" alt="Exteriér záhrada" className="w-full h-full object-cover img-hover" />
+            </div>
+            <div className="aspect-video rounded-2xl overflow-hidden">
+              <img src="/images/exterier/ex5.jpg" alt="Exteriér altánok" className="w-full h-full object-cover img-hover" />
+            </div>
+            <div className="aspect-video rounded-2xl overflow-hidden">
+              <img src="/images/exterier/ex6.jpg" alt="Exteriér pohľad" className="w-full h-full object-cover img-hover" />
+            </div>
+          </div>
+
+          {/* PÔVODNÉ FOTKY EXTERIÉRU (1 až 22) */}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
-            {[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22].map((num) => (
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22].map((num) => (
               <div key={num} className="aspect-square rounded-xl overflow-hidden">
                 <img 
                   src={`/images/exterier/${num}.jpg`}
-                  alt={`Exteriér ${num}`}
+                  alt={`Exteriér pôvodný ${num}`}
                   className="w-full h-full object-cover img-hover"
                 />
               </div>
