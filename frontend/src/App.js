@@ -1612,22 +1612,22 @@ useEffect(() => {
 
           {/* 3. BLOK - STARÉ FOTKY (Všetkých 6 kusov pre maximálnu dĺžku) */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mt-4 md:mt-6">
-            <div className="aspect-video rounded-2xl overflow-hidden opacity-70 hover:opacity-100 transition-opacity">
+            <div className="aspect-video rounded-2xl overflow-hidden opacity-100 hover:opacity-100 transition-opacity">
               <img src="/images/kuchyna/1.jpg" alt="Kuchyňa pôvodná 1" className="w-full h-full object-cover img-hover" />
             </div>
-            <div className="aspect-video rounded-2xl overflow-hidden opacity-70 hover:opacity-100 transition-opacity">
+            <div className="aspect-video rounded-2xl overflow-hidden opacity-100 hover:opacity-100 transition-opacity">
               <img src="/images/kuchyna/2.jpg" alt="Kuchyňa pôvodná 2" className="w-full h-full object-cover img-hover" />
             </div>
-            <div className="aspect-video rounded-2xl overflow-hidden opacity-70 hover:opacity-100 transition-opacity">
+            <div className="aspect-video rounded-2xl overflow-hidden opacity-100 hover:opacity-100 transition-opacity">
               <img src="/images/kuchyna/3.jpg" alt="Kuchyňa pôvodná 3" className="w-full h-full object-cover img-hover" />
             </div>
-            <div className="aspect-video rounded-2xl overflow-hidden opacity-70 hover:opacity-100 transition-opacity">
+            <div className="aspect-video rounded-2xl overflow-hidden opacity-100 hover:opacity-100 transition-opacity">
               <img src="/images/kuchyna/4.jpg" alt="Kuchyňa pôvodná 4" className="w-full h-full object-cover img-hover" />
             </div>
-            <div className="aspect-video rounded-2xl overflow-hidden opacity-70 hover:opacity-100 transition-opacity">
+            <div className="aspect-video rounded-2xl overflow-hidden opacity-100 hover:opacity-100 transition-opacity">
               <img src="/images/kuchyna/5.jpg" alt="Kuchyňa pôvodná 5" className="w-full h-full object-cover img-hover" />
             </div>
-            <div className="aspect-video rounded-2xl overflow-hidden opacity-70 hover:opacity-100 transition-opacity">
+            <div className="aspect-video rounded-2xl overflow-hidden opacity-100 hover:opacity-100 transition-opacity">
               <img src="/images/kuchyna/6.jpg" alt="Kuchyňa pôvodná 6" className="w-full h-full object-cover img-hover" />
             </div>
           </div>
