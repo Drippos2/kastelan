@@ -1583,30 +1583,24 @@ useEffect(() => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             <div className="md:col-span-2 aspect-video md:aspect-[16/10] rounded-2xl overflow-hidden">
               <img 
-                src="/images/izba1/izba1.jpg" 
+                src="/images/izba1/kuchyna1.jpg" 
                 alt="Kuchyňa hlavná"
                 className="w-full h-full object-cover img-hover"
               />
             </div>
             <div className="grid grid-rows-2 gap-4 md:gap-6">
               <div className="aspect-video md:aspect-auto rounded-2xl overflow-hidden">
-                <img src="/images/izba1/izba2.jpg" alt="Kuchyňa detail 1" className="w-full h-full object-cover img-hover" />
+                <img src="/images/izba1/kuchyna2.jpg" alt="Kuchyňa detail 1" className="w-full h-full object-cover img-hover" />
               </div>
               <div className="aspect-video md:aspect-auto rounded-2xl overflow-hidden">
-                <img src="/images/izba1/izba3.jpg" alt="Kuchyňa detail 2" className="w-full h-full object-cover img-hover" />
+                <img src="/images/izba1/kuchyna3.jpg" alt="Kuchyňa detail 2" className="w-full h-full object-cover img-hover" />
               </div>
             </div>
           </div>
 
           <div className="grid grid-cols-3 gap-4 md:gap-6 mt-4 md:mt-6">
             <div className="aspect-video rounded-2xl overflow-hidden">
-              <img src="/images/izba1/izba4.jpg" alt="Kuchyňa celok" className="w-full h-full object-cover img-hover" />
-            </div>
-            <div className="aspect-video rounded-2xl overflow-hidden">
-              <img src="/images/izba1/izba5.jpg" alt="Kuchyňa vybavenie" className="w-full h-full object-cover img-hover" />
-            </div>
-            <div className="aspect-video rounded-2xl overflow-hidden">
-              <img src="/images/izba1/izba6.jpg" alt="Kuchyňa pohľad" className="w-full h-full object-cover img-hover" />
+              <img src="/images/izba1/kuchyna4.jpg" alt="Kuchyňa celok" className="w-full h-full object-cover img-hover" />
             </div>
           </div>
 
