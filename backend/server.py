@@ -187,6 +187,35 @@ async def get_occupied_dates(room_id: int):
             curr += timedelta(days=1)
     return list(set(occupied))
 
+# --- NOVÝ ENDPOINT PRE ADMIN PANEL (Pridaj pod tvoju existujúcu logiku) ---
+
+@api_router.get("/reservations")
+async def get_all_reservations(token: str = None):
+    """
+    Tento endpoint slúži pre Admin Panel na webe, 
+    aby majiteľ videl zoznam všetkých rezervácií v tabuľke.
+    """
+    # Overenie bezpečnosti pomocou tvojho ADMIN_SECRET_TOKEN
+    if token != ADMIN_SECRET_TOKEN:
+        raise HTTPException(status_code=403, detail="Prístup zamietnutý")
+    
+    try:
+        # Vytiahneme všetky rezervácie z DB (zoradené od najnovších)
+        cursor = db.reservations.find().sort("created_at", -1)
+        reservations = await cursor.to_list(length=500)
+        
+        # MongoDB vráti objekty, ktoré React nepozná (ObjectId), 
+        # preto ich musíme prekonvertovať na čistý text
+        for res in reservations:
+            res["_id"] = str(res["_id"])
+            
+        return reservations
+    except Exception as e:
+        logger.error(f"Chyba pri načítaní rezervácií pre admina: {e}")
+        raise HTTPException(status_code=500, detail="Chyba servera pri načítaní dát")
+
+# --- KONIEC NOVÉHO ENDPOINTU ---
+
 @api_router.post("/reviews")
 async def create_review(input: ReviewCreate):
     doc = {"id": str(uuid.uuid4()), "author_name": input.author, "rating": input.rating, "text": input.text, "language": input.language, "created_at": datetime.now(timezone.utc).isoformat(), "approved": True}
