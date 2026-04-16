@@ -1,4 +1,7 @@
-export default function AdminPanel({ API }) {
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+
+  function AdminPanel({ API }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [activeTab, setActiveTab] = useState('reservations');
@@ -169,3 +172,6 @@ export default function AdminPanel({ API }) {
     </div>
   );
 }
+
+
+export default AdminPanel;
