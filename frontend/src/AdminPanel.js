@@ -1,4 +1,4 @@
-function AdminPanel({ API }) {
+export default function AdminPanel({ API }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [activeTab, setActiveTab] = useState('reservations');
