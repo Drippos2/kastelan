@@ -32,7 +32,7 @@ export default function AdminPanel({ API }) {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (password === 'Kastelan2024') { 
+    if (password === 'Kastelan123654') { 
       setIsAuthenticated(true);
       fetchAllData();
     } else {
