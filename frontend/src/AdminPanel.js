@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-  function AdminPanel({ API }) {
+export default function AdminPanel({ API }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [activeTab, setActiveTab] = useState('reservations');
@@ -16,15 +16,13 @@ import axios from 'axios';
   const fetchAllData = async () => {
     setLoading(true);
     try {
-      // Načítame rezervácie (endpoint sme si definovali v server.py)
       const resReservations = await axios.get(`${API}/reservations?token=${ADMIN_TOKEN}`);
-      // Načítame recenzie (tento endpoint už máš hotový)
       const resReviews = await axios.get(`${API}/reviews`);
       
       setData({
         reservations: Array.isArray(resReservations.data) ? resReservations.data : [],
         reviews: Array.isArray(resReviews.data) ? resReviews.data : [],
-        contacts: [] // Sem neskôr pridáme správy, ak ich ukladáš
+        contacts: []
       });
     } catch (err) {
       console.error("Chyba pri sťahovaní dát:", err);
@@ -34,7 +32,7 @@ import axios from 'axios';
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (password === 'Kastelan2024') { // Toto heslo si potom zmeň
+    if (password === 'Kastelan2024') { 
       setIsAuthenticated(true);
       fetchAllData();
     } else {
@@ -42,7 +40,6 @@ import axios from 'axios';
     }
   };
 
-  // Login obrazovka
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-[#F3F4F6] flex items-center justify-center p-4">
@@ -68,7 +65,6 @@ import axios from 'axios';
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col md:flex-row font-sans text-gray-800">
-      {/* Sidebar - Dizajn ladený do zelenej */}
       <div className="w-full md:w-64 bg-[#065F46] text-white p-6 shadow-2xl">
         <div className="mb-10">
           <h2 className="text-2xl font-bold font-serif tracking-wide text-center md:text-left">Kastelán</h2>
@@ -95,28 +91,26 @@ import axios from 'axios';
         </button>
       </div>
 
-      {/* Obsahová časť */}
       <div className="flex-1 p-4 md:p-10 overflow-y-auto">
         <header className="flex justify-between items-center mb-8 border-b pb-4">
           <h1 className="text-3xl font-bold text-gray-800 capitalize">{activeTab === 'reservations' ? 'Rezervácie' : 'Recenzie'}</h1>
-          <button onClick={fetchAllData} className="bg-white p-2 rounded-full shadow hover:shadow-md text-[#065F46]" title="Refresh">
+          <button onClick={fetchAllData} className="bg-white p-2 rounded-full shadow hover:shadow-md text-[#065F46]">
             🔄
           </button>
         </header>
 
         {loading ? (
-          <div className="flex justify-center items-center h-64 text-[#065F46]">Načítavam dáta z databázy...</div>
+          <div className="flex justify-center items-center h-64 text-[#065F46]">Načítavam dáta...</div>
         ) : (
           <div className="space-y-4">
             {activeTab === 'reservations' ? (
-              // TABUĽKA REZERVÁCIÍ
               <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-x-auto">
                 <table className="w-full text-left">
                   <thead className="bg-gray-50 border-b">
                     <tr>
                       <th className="p-4 text-xs uppercase text-gray-500 font-bold">Hosť / Kontakt</th>
                       <th className="p-4 text-xs uppercase text-gray-500 font-bold text-center">Izba</th>
-                      <th className="p-4 text-xs uppercase text-gray-500 font-bold">Termín pobytu</th>
+                      <th className="p-4 text-xs uppercase text-gray-500 font-bold">Termín</th>
                       <th className="p-4 text-xs uppercase text-gray-500 font-bold text-center">Status</th>
                     </tr>
                   </thead>
@@ -150,7 +144,6 @@ import axios from 'axios';
                 </table>
               </div>
             ) : (
-              // ZOZNAM RECENZIÍ
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {data.reviews.map((rev) => (
                   <div key={rev._id} className="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-[#065F46]">
@@ -160,7 +153,7 @@ import axios from 'axios';
                     </div>
                     <p className="text-gray-600 italic text-sm">"{rev.text}"</p>
                     <div className="mt-4 text-[10px] text-gray-400 uppercase tracking-tighter">
-                      Pridané: {new Date(rev.created_at).toLocaleDateString()}
+                      {new Date(rev.created_at).toLocaleDateString()}
                     </div>
                   </div>
                 ))}
@@ -172,6 +165,3 @@ import axios from 'axios';
     </div>
   );
 }
-
-
-export default AdminPanel;
