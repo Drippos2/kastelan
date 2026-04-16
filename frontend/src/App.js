@@ -5,6 +5,7 @@ import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
 import { Textarea } from "./components/ui/textarea";
 import { Label } from "./components/ui/label";
+import AdminPanel from './AdminPanel';
 import { Calendar } from "./components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./components/ui/select";
@@ -1018,6 +1019,18 @@ const fetchBookedDates = useCallback(async (roomId) => {
     const dateString = format(date, "yyyy-MM-dd");
     return bookedDates.includes(dateString);
   };
+
+  // AK JE ADRESA V PREHLIADAČI PRESNE '/admin', UKÁŽ LEN ADMIN PANEL
+  if (window.location.pathname === '/admin') {
+    return <AdminPanel />;
+  }
+
+  // Ak to nie je /admin, ukáž klasickú stránku pre zákazníkov
+  return (
+    <div>
+       {/* Tvoj doterajší kód (Navbar, Hero, Izby, Kuchyna, atď.) */}
+    </div>
+  );
   
   // --- 4. EFEKTY ---
   
