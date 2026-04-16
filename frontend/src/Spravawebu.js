@@ -12,17 +12,17 @@ export default function AdminPanel({ API }) {
   // Tvoj tajný token, ktorý máš aj v server.py
   const ADMIN_TOKEN = "Kastelan123654"; 
 
-  // Funkcia na načítanie všetkého z DB
+  // --- UPRAVENÁ FUNKCIA NA NAČÍTANIE VŠETKÉHO ---
   const fetchAllData = async () => {
     setLoading(true);
     try {
-      const resReservations = await axios.get(`${API}/reservations?token=${ADMIN_TOKEN}`);
-      const resReviews = await axios.get(`${API}/reviews`);
+      // Voláme tvoj nový endpoint, ktorý vracia objekt so všetkým (reservations, reviews, messages)
+      const res = await axios.get(`${API}/reservations?token=${ADMIN_TOKEN}`);
       
       setData({
-        reservations: Array.isArray(resReservations.data) ? resReservations.data : [],
-        reviews: Array.isArray(resReviews.data) ? resReviews.data : [],
-        contacts: []
+        reservations: Array.isArray(res.data.reservations) ? res.data.reservations : [],
+        reviews: Array.isArray(res.data.reviews) ? res.data.reviews : [],
+        contacts: Array.isArray(res.data.messages) ? res.data.messages : [] // Tu sa ukladajú správy
       });
     } catch (err) {
       console.error("Chyba pri sťahovaní dát:", err);
@@ -84,6 +84,13 @@ export default function AdminPanel({ API }) {
           >
             ⭐ Recenzie
           </button>
+          {/* PRIDANÉ TLAČIDLO PRE SPRÁVY */}
+          <button 
+            onClick={() => setActiveTab('contacts')}
+            className={`w-full text-left p-3 rounded-xl transition-all ${activeTab === 'contacts' ? 'bg-white text-[#065F46] shadow-md' : 'hover:bg-[#044c38]'}`}
+          >
+            ✉️ Správy z webu
+          </button>
         </nav>
 
         <button onClick={() => window.location.href = '/'} className="mt-20 w-full text-sm text-green-200 hover:text-white border border-green-700 p-2 rounded-lg">
@@ -93,7 +100,9 @@ export default function AdminPanel({ API }) {
 
       <div className="flex-1 p-4 md:p-10 overflow-y-auto">
         <header className="flex justify-between items-center mb-8 border-b pb-4">
-          <h1 className="text-3xl font-bold text-gray-800 capitalize">{activeTab === 'reservations' ? 'Rezervácie' : 'Recenzie'}</h1>
+          <h1 className="text-3xl font-bold text-gray-800 capitalize">
+            {activeTab === 'reservations' ? 'Rezervácie' : activeTab === 'reviews' ? 'Recenzie' : 'Správy z webu'}
+          </h1>
           <button onClick={fetchAllData} className="bg-white p-2 rounded-full shadow hover:shadow-md text-[#065F46]">
             🔄
           </button>
@@ -143,7 +152,7 @@ export default function AdminPanel({ API }) {
                   </tbody>
                 </table>
               </div>
-            ) : (
+            ) : activeTab === 'reviews' ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {data.reviews.map((rev) => (
                   <div key={rev._id} className="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-[#065F46]">
@@ -157,6 +166,30 @@ export default function AdminPanel({ API }) {
                     </div>
                   </div>
                 ))}
+              </div>
+            ) : (
+              /* --- PRIDANÁ SEKCIJA PRE SPRÁVY (CONTACTS) --- */
+              <div className="grid grid-cols-1 gap-4">
+                {data.contacts.length === 0 ? (
+                  <div className="text-center py-20 text-gray-400">Zatiaľ žiadne správy</div>
+                ) : (
+                  data.contacts.map((msg) => (
+                    <div key={msg._id} className="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-blue-500">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <h3 className="font-bold text-lg text-gray-900">{msg.name}</h3>
+                          <div className="text-sm text-blue-600 font-medium">{msg.email} {msg.phone && `| ${msg.phone}`}</div>
+                        </div>
+                        <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">
+                          {new Date(msg.created_at).toLocaleString('sk-SK')}
+                        </span>
+                      </div>
+                      <div className="mt-3 bg-gray-50 p-4 rounded-xl border border-gray-100 text-gray-700 italic">
+                        "{msg.message}"
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             )}
           </div>

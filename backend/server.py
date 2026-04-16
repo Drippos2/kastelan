@@ -68,7 +68,6 @@ async def send_reservation_emails(res_data: dict):
         confirm_url = f"{BASE_URL}/api/reservations/confirm/{res_id}?token={ADMIN_SECRET_TOKEN}"
         delete_url = f"{BASE_URL}/api/reservations/delete/{res_id}?token={ADMIN_SECRET_TOKEN}"
 
-        # HTML Šablóna pre majiteľa so všetkými údajmi
         owner_html = f"""
         <div style="font-family: sans-serif; padding: 20px; border: 1px solid #ddd; max-width: 600px; border-radius: 10px;">
             <h2 style="color: #065F46;">Nová rezervácia - Penzión Kastelán</h2>
@@ -87,7 +86,6 @@ async def send_reservation_emails(res_data: dict):
         </div>
         """
         
-        # Odoslanie majiteľovi
         resend.Emails.send({
             "from": "Penzión Kastelán <info@penzionkastelan.sk>", 
             "to": [NOTIFICATION_EMAIL], 
@@ -95,7 +93,6 @@ async def send_reservation_emails(res_data: dict):
             "html": owner_html
         })
         
-        # Odoslanie potvrdenia hosťovi
         guest_html = f"""
         <div style='font-family: sans-serif; padding: 20px;'>
             <h2>Dobrý deň, {res_data['guest_name']},</h2>
@@ -187,34 +184,30 @@ async def get_occupied_dates(room_id: int):
             curr += timedelta(days=1)
     return list(set(occupied))
 
-# --- NOVÝ ENDPOINT PRE ADMIN PANEL (Pridaj pod tvoju existujúcu logiku) ---
-
 @api_router.get("/reservations")
-async def get_all_reservations(token: str = None):
-    """
-    Tento endpoint slúži pre Admin Panel na webe, 
-    aby majiteľ videl zoznam všetkých rezervácií v tabuľke.
-    """
-    # Overenie bezpečnosti pomocou tvojho ADMIN_SECRET_TOKEN
+async def get_all_admin_data(token: str = None):
     if token != ADMIN_SECRET_TOKEN:
         raise HTTPException(status_code=403, detail="Prístup zamietnutý")
     
     try:
-        # Vytiahneme všetky rezervácie z DB (zoradené od najnovších)
-        cursor = db.reservations.find().sort("created_at", -1)
-        reservations = await cursor.to_list(length=500)
+        # Načítanie všetkých troch kolekcií
+        reservations = await db.reservations.find().sort("created_at", -1).to_list(length=500)
+        reviews = await db.reviews.find().sort("created_at", -1).to_list(length=500)
+        contacts = await db.contacts.find().sort("created_at", -1).to_list(length=500)
         
-        # MongoDB vráti objekty, ktoré React nepozná (ObjectId), 
-        # preto ich musíme prekonvertovať na čistý text
-        for res in reservations:
-            res["_id"] = str(res["_id"])
+        # Konverzia ObjectId na string pre React
+        for res in reservations: res["_id"] = str(res["_id"])
+        for rev in reviews: rev["_id"] = str(rev["_id"])
+        for con in contacts: con["_id"] = str(con["_id"])
             
-        return reservations
+        return {
+            "reservations": reservations,
+            "reviews": reviews,
+            "messages": contacts
+        }
     except Exception as e:
-        logger.error(f"Chyba pri načítaní rezervácií pre admina: {e}")
-        raise HTTPException(status_code=500, detail="Chyba servera pri načítaní dát")
-
-# --- KONIEC NOVÉHO ENDPOINTU ---
+        logger.error(f"Chyba pri načítaní dát pre admina: {e}")
+        raise HTTPException(status_code=500, detail="Chyba servera")
 
 @api_router.post("/reviews")
 async def create_review(input: ReviewCreate):
