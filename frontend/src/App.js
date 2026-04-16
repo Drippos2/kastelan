@@ -996,9 +996,8 @@ function App() {
   }, [API]);
 
 const fetchBookedDates = useCallback(async (roomId) => {
-  if (!roomId) return; // Ak nie je vybraná izba, nič nesťahuj
+  if (!roomId) return; 
   try {
-    // Pridali sme ?room_id= na koniec adresy
     const res = await axios.get(`${API}/reservations/occupied?room_id=${roomId}`);
     setBookedDates(Array.isArray(res.data) ? res.data : []);
   } catch (e) { 
@@ -1006,31 +1005,20 @@ const fetchBookedDates = useCallback(async (roomId) => {
   }
 }, [API]);
 
-  // Funkcia, ktorá zakáže dátumy v kalendári
   const isDateDisabled = (date) => {
     if (!date) return false;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
-    // 1. Zakáže minulosť
     if (date < today) return true;
-    
-    // 2. Zakáže dni, ktoré prišli z databázy
     const dateString = format(date, "yyyy-MM-dd");
     return bookedDates.includes(dateString);
   };
 
-  // AK JE ADRESA V PREHLIADAČI PRESNE '/admin', UKÁŽ LEN ADMIN PANEL
-  if (window.location.pathname === '/admin') {
-    return <AdminPanel />;
+  // --- TU JE MOJA PRIDANÁ LOGIKA PRE ADMINA ---
+  // Táto podmienka musí byť TU – po všetkých funkciách, ale PRED hlavným returnom.
+  if (typeof window !== 'undefined' && window.location.pathname === '/admin') {
+    return <AdminPanel API={API} />;
   }
-
-  // Ak to nie je /admin, ukáž klasickú stránku pre zákazníkov
-  return (
-    <div>
-       {/* Tvoj doterajší kód (Navbar, Hero, Izby, Kuchyna, atď.) */}
-    </div>
-  );
   
   // --- 4. EFEKTY ---
   
