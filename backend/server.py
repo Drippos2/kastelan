@@ -86,6 +86,7 @@ async def send_reservation_emails(res_data: dict):
         </div>
         """
         
+        # Odošle mail majiteľovi
         resend.Emails.send({
             "from": "Penzión Kastelán <info@penzionkastelan.sk>", 
             "to": [NOTIFICATION_EMAIL], 
@@ -93,6 +94,7 @@ async def send_reservation_emails(res_data: dict):
             "html": owner_html
         })
         
+        # Odošle mail hosťovi
         guest_html = f"""
         <div style='font-family: sans-serif; padding: 20px;'>
             <h2>Dobrý deň, {res_data['guest_name']},</h2>
@@ -134,6 +136,11 @@ async def send_contact_email(contact_data: dict):
 # --- 6. API Router ---
 api_router = APIRouter(prefix="/api")
 
+# NOVÝ ENDPOINT PRE CRON-JOB (Aby server nezaspal)
+@api_router.get("/ping")
+async def ping():
+    return {"status": "alive", "timestamp": datetime.now(timezone.utc).isoformat()}
+
 @api_router.post("/reservations")
 async def create_reservation(input: ReservationCreate):
     doc = {
@@ -150,6 +157,7 @@ async def create_reservation(input: ReservationCreate):
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     await db.reservations.insert_one(doc)
+    # create_task zabezpečí, že API odpovie hneď a maily sa skúsia poslať na pozadí
     asyncio.create_task(send_reservation_emails(doc))
     return {"status": "success"}
 
@@ -176,12 +184,15 @@ async def get_occupied_dates(room_id: int):
     reservations = await cursor.to_list(length=1000)
     occupied = []
     for res in reservations:
-        start = datetime.strptime(res["check_in"], "%Y-%m-%d")
-        end = datetime.strptime(res["check_out"], "%Y-%m-%d")
-        curr = start
-        while curr <= end:
-            occupied.append(curr.strftime("%Y-%m-%d"))
-            curr += timedelta(days=1)
+        try:
+            start = datetime.strptime(res["check_in"], "%Y-%m-%d")
+            end = datetime.strptime(res["check_out"], "%Y-%m-%d")
+            curr = start
+            while curr <= end:
+                occupied.append(curr.strftime("%Y-%m-%d"))
+                curr += timedelta(days=1)
+        except Exception:
+            continue
     return list(set(occupied))
 
 @api_router.get("/reservations")
@@ -190,12 +201,10 @@ async def get_all_admin_data(token: str = None):
         raise HTTPException(status_code=403, detail="Prístup zamietnutý")
     
     try:
-        # Načítanie všetkých troch kolekcií
         reservations = await db.reservations.find().sort("created_at", -1).to_list(length=500)
         reviews = await db.reviews.find().sort("created_at", -1).to_list(length=500)
         contacts = await db.contacts.find().sort("created_at", -1).to_list(length=500)
         
-        # Konverzia ObjectId na string pre React
         for res in reservations: res["_id"] = str(res["_id"])
         for rev in reviews: rev["_id"] = str(rev["_id"])
         for con in contacts: con["_id"] = str(con["_id"])
@@ -211,7 +220,15 @@ async def get_all_admin_data(token: str = None):
 
 @api_router.post("/reviews")
 async def create_review(input: ReviewCreate):
-    doc = {"id": str(uuid.uuid4()), "author_name": input.author, "rating": input.rating, "text": input.text, "language": input.language, "created_at": datetime.now(timezone.utc).isoformat(), "approved": True}
+    doc = {
+        "id": str(uuid.uuid4()), 
+        "author_name": input.author, 
+        "rating": input.rating, 
+        "text": input.text, 
+        "language": input.language, 
+        "created_at": datetime.now(timezone.utc).isoformat(), 
+        "approved": True
+    }
     await db.reviews.insert_one(doc)
     return {"status": "success"}
 
@@ -223,7 +240,14 @@ async def get_reviews():
 
 @api_router.post("/contact")
 async def create_contact(input: ContactCreate):
-    doc = {"id": str(uuid.uuid4()), "name": input.name, "email": input.email, "phone": input.phone, "message": input.message, "created_at": datetime.now(timezone.utc).isoformat()}
+    doc = {
+        "id": str(uuid.uuid4()), 
+        "name": input.name, 
+        "email": input.email, 
+        "phone": input.phone, 
+        "message": input.message, 
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
     await db.contacts.insert_one(doc)
     asyncio.create_task(send_contact_email(doc))
     return {"status": "success"}
@@ -234,8 +258,11 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 
 @app.on_event("startup")
 async def startup_db_test():
-    try: await client.admin.command('ping')
-    except Exception as e: logger.error(f"DB Error: {e}")
+    try: 
+        await client.admin.command('ping')
+        logger.info("MongoDB pripojené úspešne!")
+    except Exception as e: 
+        logger.error(f"DB Error: {e}")
 
 if __name__ == "__main__":
     import uvicorn
