@@ -1973,7 +1973,21 @@ useEffect(() => {
               <div className="relative">
                 <select
                   value={reservationData.room_id}
-                  onChange={(e) => setReservationData({...reservationData, room_id: e.target.value})}
+                  onChange={(e) => {
+                    const selectedRoomId = e.target.value;
+                    let currentGuests = reservationData.guests;
+                    
+                    // Ak preklikne na dvojlôžkovú izbu (všetky okrem 3) a mal navolené viac ako 2 osoby, automaticky znížime na 2
+                    if (selectedRoomId !== "3" && (parseInt(currentGuests) > 2)) {
+                      currentGuests = "2";
+                    }
+
+                    setReservationData({
+                      ...reservationData, 
+                      room_id: selectedRoomId,
+                      guests: currentGuests
+                    });
+                  }}
                   className="w-full h-11 pl-3 pr-10 rounded-md border border-[#065F46]/20 bg-white text-sm focus:outline-none focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/20 appearance-none cursor-pointer"
                   data-testid="reservation-room-select"
                   required
@@ -1992,7 +2006,7 @@ useEffect(() => {
               </div>
             </div>
 
-            {/* Nové políčko: Výber počtu hostí naviazaný na state .guests */}
+            {/* Dynamické políčko: Výber počtu hostí s obmedzením podľa kapacity izby */}
             <div>
               <Label className="text-[#065F46] mb-2 block font-medium">
                 {t.reservation.guests_label || "Počet osôb"}
@@ -2006,8 +2020,14 @@ useEffect(() => {
                 >
                   <option value="1">1 osoba</option>
                   <option value="2">2 osoby</option>
-                  <option value="3">3 osoby</option>
-                  <option value="4">4 osoby</option>
+                  
+                  {/* Tieto možnosti sa zobrazia iba vtedy, ak je vybraná Izba č. 3 */}
+                  {reservationData.room_id === "3" && (
+                    <>
+                      <option value="3">3 osoby</option>
+                      <option value="4">4 osoby</option>
+                    </>
+                  )}
                 </select>
                 <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#065F46]/50">
                   <ChevronDown className="h-4 w-4" />
