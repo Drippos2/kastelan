@@ -1992,6 +1992,29 @@ useEffect(() => {
               </div>
             </div>
 
+            {/* Nové políčko: Výber počtu hostí naviazaný na state .guests */}
+            <div>
+              <Label className="text-[#065F46] mb-2 block font-medium">
+                {t.reservation.guests_label || "Počet osôb"}
+              </Label>
+              <div className="relative">
+                <select
+                  value={reservationData.guests}
+                  onChange={(e) => setReservationData({...reservationData, guests: e.target.value})}
+                  className="w-full h-11 pl-3 pr-10 rounded-md border border-[#065F46]/20 bg-white text-sm focus:outline-none focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/20 appearance-none cursor-pointer"
+                  required
+                >
+                  <option value="1">1 osoba</option>
+                  <option value="2">2 osoby</option>
+                  <option value="3">3 osoby</option>
+                  <option value="4">4 osoby</option>
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#065F46]/50">
+                  <ChevronDown className="h-4 w-4" />
+                </div>
+              </div>
+            </div>
+
             {/* Dátum Príchodu */}
             <div className="space-y-2">
               <Label>{t.reservation.check_in_label || "Príchod"}</Label>
@@ -2060,18 +2083,18 @@ useEffect(() => {
               />
             </div>
 
-         {/* SEM VLOŽ TENTO NOVÝ BLOK PRE TELEFÓN: */}
-           <div className="space-y-2">
-           <Label>{t.contact.phone || "Telefónne číslo"}</Label>
-           <Input 
-            type="tel" 
-            placeholder="+421 9xx xxx xxx"
-            required
-            value={reservationData.guest_phone}
-            onChange={(e) => setReservationData({ ...reservationData, guest_phone: e.target.value })}
-            className="py-6"
-          />
-       </div>
+            {/* Blok pre telefón */}
+            <div className="space-y-2">
+              <Label>{t.contact.phone || "Telefónne číslo"}</Label>
+              <Input 
+                type="tel" 
+                placeholder="+421 9xx xxx xxx"
+                required
+                value={reservationData.guest_phone}
+                onChange={(e) => setReservationData({ ...reservationData, guest_phone: e.target.value })}
+                className="py-6"
+              />
+            </div>
 
             {/* Tlačidlo Odoslať */}
             <div className="md:col-span-2 mt-4">
@@ -2086,6 +2109,7 @@ useEffect(() => {
           </form>
         </div>
       </section>
+
       {/* Reviews Section */}
       <section id="reviews-section" className="py-16 md:py-32 bg-[#081C15]" data-testid="reviews-section">
         <div className="max-w-5xl mx-auto px-4 md:px-8">
