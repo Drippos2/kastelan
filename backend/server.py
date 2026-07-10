@@ -27,7 +27,7 @@ NOTIFICATION_EMAIL = os.getenv("NOTIFICATION_EMAIL", "info@penzionkastelan.sk")
 MONGO_URL = os.getenv('MONGO_URL')
 DB_NAME = os.getenv('DB_NAME', 'kastelan_db')
 
-BASE_URL = "https://kastelan.onrender.com"
+BASE_URL = "https://kastelan-voka.onrender.com"
 ADMIN_SECRET_TOKEN = "Kastelan123654" 
 
 # --- 3. Databáza ---
