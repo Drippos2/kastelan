@@ -20,6 +20,15 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
+# --- OPRAVA: CORS Middleware musí byť hneď tu, pred definíciou routov ---
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # V produkcii môžeš zmeniť na ["https://www.penzionkastelan.sk"]
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # --- 2. Konfigurácia ---
 RESEND_KEY = os.getenv("RESEND_API_KEY")
 resend.api_key = RESEND_KEY
@@ -64,7 +73,6 @@ async def send_reservation_emails(res_data: dict):
     try:
         room = ROOM_NAMES.get(res_data["room_id"], "Izba")
         res_id = res_data["id"]
-
         confirm_url = f"{BASE_URL}/api/reservations/confirm/{res_id}?token={ADMIN_SECRET_TOKEN}"
         delete_url = f"{BASE_URL}/api/reservations/delete/{res_id}?token={ADMIN_SECRET_TOKEN}"
 
@@ -85,8 +93,6 @@ async def send_reservation_emails(res_data: dict):
             </div>
         </div>
         """
-        
-        # Odošle mail majiteľovi
         resend.Emails.send({
             "from": "Penzión Kastelán <info@penzionkastelan.sk>", 
             "to": [NOTIFICATION_EMAIL], 
@@ -94,7 +100,6 @@ async def send_reservation_emails(res_data: dict):
             "html": owner_html
         })
         
-        # Odošle mail hosťovi
         guest_html = f"""
         <div style='font-family: sans-serif; padding: 20px;'>
             <h2>Dobrý deň, {res_data['guest_name']},</h2>
@@ -136,7 +141,6 @@ async def send_contact_email(contact_data: dict):
 # --- 6. API Router ---
 api_router = APIRouter(prefix="/api")
 
-# NOVÝ ENDPOINT PRE CRON-JOB (Aby server nezaspal)
 @api_router.get("/ping")
 async def ping():
     return {"status": "alive", "timestamp": datetime.now(timezone.utc).isoformat()}
@@ -157,7 +161,6 @@ async def create_reservation(input: ReservationCreate):
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     await db.reservations.insert_one(doc)
-    # create_task zabezpečí, že API odpovie hneď a maily sa skúsia poslať na pozadí
     asyncio.create_task(send_reservation_emails(doc))
     return {"status": "success"}
 
@@ -177,10 +180,7 @@ async def email_delete_reservation(res_id: str, token: str = None):
 
 @api_router.get("/reservations/occupied")
 async def get_occupied_dates(room_id: int):
-    cursor = db.reservations.find({
-        "status": "confirmed",
-        "room_id": room_id
-    })
+    cursor = db.reservations.find({"status": "confirmed", "room_id": room_id})
     reservations = await cursor.to_list(length=1000)
     occupied = []
     for res in reservations:
@@ -199,21 +199,14 @@ async def get_occupied_dates(room_id: int):
 async def get_all_admin_data(token: str = None):
     if token != ADMIN_SECRET_TOKEN:
         raise HTTPException(status_code=403, detail="Prístup zamietnutý")
-    
     try:
         reservations = await db.reservations.find().sort("created_at", -1).to_list(length=500)
         reviews = await db.reviews.find().sort("created_at", -1).to_list(length=500)
         contacts = await db.contacts.find().sort("created_at", -1).to_list(length=500)
-        
         for res in reservations: res["_id"] = str(res["_id"])
         for rev in reviews: rev["_id"] = str(rev["_id"])
         for con in contacts: con["_id"] = str(con["_id"])
-            
-        return {
-            "reservations": reservations,
-            "reviews": reviews,
-            "messages": contacts
-        }
+        return {"reservations": reservations, "reviews": reviews, "messages": contacts}
     except Exception as e:
         logger.error(f"Chyba pri načítaní dát pre admina: {e}")
         raise HTTPException(status_code=500, detail="Chyba servera")
@@ -254,7 +247,6 @@ async def create_contact(input: ContactCreate):
 
 # --- 7. Spustenie ---
 app.include_router(api_router)
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 @app.on_event("startup")
 async def startup_db_test():
