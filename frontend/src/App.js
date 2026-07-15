@@ -1429,14 +1429,9 @@ useEffect(() => {
               {t.hero.description}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up animation-delay-600 justify-center">
-              <Button
-                onClick={() => scrollToSection("reservation")}
-                size="lg"
-                className="bg-gradient-to-r from-[#10B981] to-[#3B82F6] hover:from-[#059669] hover:to-[#2563EB] text-white btn-glow cta-pulse px-8 py-6 text-lg font-semibold shadow-lg"
-                data-testid="hero-cta"
-              >
-                {t.hero.cta}
-              </Button>
+            <Button asChild size="lg" className="bg-gradient-to-r from-[#10B981] to-[#3B82F6] hover:from-[#059669] hover:to-[#2563EB] text-white px-8 py-6 text-lg font-semibold shadow-lg">
+              <a href="tel:+421905327279">Rezervovať</a>
+            </Button>
               <Button
                 onClick={() => scrollToSection("about")}
                 size="lg"
@@ -1598,6 +1593,12 @@ useEffect(() => {
         </div>
       </section>
 
+      <div className="flex justify-center mt-8">
+  <Button asChild size="lg" className="bg-gradient-to-r from-[#10B981] to-[#3B82F6] hover:from-[#059669] hover:to-[#2563EB] text-white px-12 py-8 text-lg font-semibold shadow-lg">
+    <a href="tel:+421905327279">Rezervovať izbu</a>
+  </Button>
+</div>
+
       {/* Sekcia Ďalšie - vložiť medzi Kitchen a Services */}
       <section id="others" className="py-16 md:py-32 bg-gray-50" data-testid="others-section">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
@@ -1650,6 +1651,7 @@ useEffect(() => {
           </div>
         </div>
       </section>
+
 
        {/* Kitchen Section */}
       <section id="kitchen" className="py-16 md:py-32" data-testid="kitchen-section">
@@ -1950,183 +1952,6 @@ useEffect(() => {
               {t.pricing.company}
             </p>
           </div>
-        </div>
-      </section>
-
-      {/* Reservation Section */}
-      <section id="reservation" className="py-16 md:py-32 bg-slate-50">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="font-heading text-3xl md:text-5xl text-[#065F46] mb-4">
-              {t.reservation.title}
-            </h2>
-            <p className="text-slate-600">{t.reservation.description}</p>
-          </div>
-
-          <form onSubmit={handleReservationSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-8 rounded-3xl shadow-xl border border-slate-100">
-            
-            {/* Room Selection - Opravené pre mobily */}
-            <div>
-              <Label className="text-[#065F46] mb-2 block font-medium">
-                {t.reservation.room_label || "Vyberte izbu"}
-              </Label>
-              <div className="relative">
-                <select
-                  value={reservationData.room_id}
-                  onChange={(e) => {
-                    const selectedRoomId = e.target.value;
-                    let currentGuests = reservationData.guests;
-                    
-                    // Ak preklikne na dvojlôžkovú izbu (všetky okrem 3) a mal navolené viac ako 2 osoby, automaticky znížime na 2
-                    if (selectedRoomId !== "3" && (parseInt(currentGuests) > 2)) {
-                      currentGuests = "2";
-                    }
-
-                    setReservationData({
-                      ...reservationData, 
-                      room_id: selectedRoomId,
-                      guests: currentGuests
-                    });
-                  }}
-                  className="w-full h-11 pl-3 pr-10 rounded-md border border-[#065F46]/20 bg-white text-sm focus:outline-none focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/20 appearance-none cursor-pointer"
-                  data-testid="reservation-room-select"
-                  required
-                >
-                  <option value="" disabled>{t.reservation.selectRoom || "Vyberte si izbu"}</option>
-                  <option value="1">Izba č. 1 (Dvojlôžková)</option>
-                  <option value="2">Izba č. 2 (Dvojlôžková)</option>
-                  <option value="3">Izba č. 3 (Štvorlôžková)</option>
-                  <option value="4">Izba č. 4 (Dvojlôžková)</option>
-                  <option value="5">Izba č. 5 (Dvojlôžková)</option>
-                </select>
-                {/* Vlastná šípka, aby to vyzeralo dobre */}
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#065F46]/50">
-                  <ChevronDown className="h-4 w-4" />
-                </div>
-              </div>
-            </div>
-
-            {/* Dynamické políčko: Výber počtu hostí s obmedzením podľa kapacity izby */}
-            <div>
-              <Label className="text-[#065F46] mb-2 block font-medium">
-                {t.reservation.guests_label || "Počet osôb"}
-              </Label>
-              <div className="relative">
-                <select
-                  value={reservationData.guests}
-                  onChange={(e) => setReservationData({...reservationData, guests: e.target.value})}
-                  className="w-full h-11 pl-3 pr-10 rounded-md border border-[#065F46]/20 bg-white text-sm focus:outline-none focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/20 appearance-none cursor-pointer"
-                  required
-                >
-                  <option value="1">1 osoba</option>
-                  <option value="2">2 osoby</option>
-                  
-                  {/* Tieto možnosti sa zobrazia iba vtedy, ak je vybraná Izba č. 3 */}
-                  {reservationData.room_id === "3" && (
-                    <>
-                      <option value="3">3 osoby</option>
-                      <option value="4">4 osoby</option>
-                    </>
-                  )}
-                </select>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#065F46]/50">
-                  <ChevronDown className="h-4 w-4" />
-                </div>
-              </div>
-            </div>
-
-            {/* Dátum Príchodu */}
-            <div className="space-y-2">
-              <Label>{t.reservation.check_in_label || "Príchod"}</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start text-left py-6">
-                    <CalendarDays className="mr-2 h-4 w-4" />
-                    {reservationData.check_in ? format(reservationData.check_in, "PPP", { locale: dateLocale }) : <span>Vyberte dátum</span>}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={reservationData.check_in}
-                    onSelect={(date) => setReservationData({ ...reservationData, check_in: date })}
-                    disabled={isDateDisabled}
-                    initialFocus
-                    locale={dateLocale}
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-
-            {/* Dátum Odchodu */}
-            <div className="space-y-2">
-              <Label>{t.reservation.check_out_label || "Odchod"}</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start text-left py-6">
-                    <CalendarDays className="mr-2 h-4 w-4" />
-                    {reservationData.check_out ? format(reservationData.check_out, "PPP", { locale: dateLocale }) : <span>Vyberte dátum</span>}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={reservationData.check_out}
-                    onSelect={(date) => setReservationData({ ...reservationData, check_out: date })}
-                    disabled={isDateDisabled}
-                    initialFocus
-                    locale={dateLocale}
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-
-            {/* Osobné údaje */}
-            <div className="space-y-2">
-              <Label>{t.contact.name}</Label>
-              <Input 
-                required
-                value={reservationData.guest_name}
-                onChange={(e) => setReservationData({ ...reservationData, guest_name: e.target.value })}
-                className="py-6"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>{t.contact.email}</Label>
-              <Input 
-                type="email" 
-                required
-                value={reservationData.guest_email}
-                onChange={(e) => setReservationData({ ...reservationData, guest_email: e.target.value })}
-                className="py-6"
-              />
-            </div>
-
-            {/* Blok pre telefón */}
-            <div className="space-y-2">
-              <Label>{t.contact.phone || "Telefónne číslo"}</Label>
-              <Input 
-                type="tel" 
-                placeholder="+421 9xx xxx xxx"
-                required
-                value={reservationData.guest_phone}
-                onChange={(e) => setReservationData({ ...reservationData, guest_phone: e.target.value })}
-                className="py-6"
-              />
-            </div>
-
-            {/* Tlačidlo Odoslať */}
-            <div className="md:col-span-2 mt-4">
-              <Button 
-                type="submit" 
-                disabled={reservationSending}
-                className="w-full bg-[#065F46] hover:bg-[#054F3A] text-white py-8 text-xl font-bold rounded-2xl transition-all shadow-lg"
-              >
-                {reservationSending ? "Odosielam..." : t.reservation.submit_btn || "Záväzne rezervovať"}
-              </Button>
-            </div>
-          </form>
         </div>
       </section>
 

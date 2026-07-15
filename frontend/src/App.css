@@ -165,7 +165,7 @@
     left: 50%;
     transform: translateX(-50%);
     width: 60px;
-    height: 3px;
+    height: 10px;
     background: linear-gradient(90deg, #10B981, #3B82F6);
     border-radius: 2px;
 }
@@ -183,7 +183,7 @@
     left: 0;
     top: 50%;
     width: 40px;
-    height: 2px;
+    height: 20px;
     background: linear-gradient(90deg, #10B981, #3B82F6);
     animation: overlineExpand 2s ease-in-out infinite;
 }
@@ -225,7 +225,7 @@
 }
 
 .cta-pulse {
-    animation: pulse-shadow 2s infinite;
+    animation: pulse-shadow 3s infinite;
 }
 
 /* ===== PRICE TABLE ===== */
@@ -293,7 +293,7 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 3px;
+    height: 20px;
     background: linear-gradient(90deg, #10B981, #3B82F6);
     transform: scaleX(0);
     transition: transform 0.4s ease;
@@ -322,7 +322,7 @@
     bottom: -4px;
     left: 50%;
     width: 0;
-    height: 2px;
+    height: 20px;
     background: linear-gradient(90deg, #10B981, #3B82F6);
     transition: all 0.3s ease;
     transform: translateX(-50%);
