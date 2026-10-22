@@ -1938,7 +1938,7 @@ useEffect(() => {
                 <div className="flex items-center gap-2">
                   <Users className="w-5 h-5 text-[#334155]" />
                   <span className="text-[#334155]">{t.pricing.adult}:</span>
-                  <span className="text-[#065F46] font-medium">1,800 €</span>
+                  <span className="text-[#065F46] font-medium">1,80 €</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Users className="w-5 h-5 text-[#334155]" />
